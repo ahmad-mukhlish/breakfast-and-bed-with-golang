@@ -1,0 +1,20 @@
+{{template "base" .}}
+
+{{define "content"}}
+<h1> This is the about page </h1>
+<p> Data from tempalte {{index .StringMap "test"}} </p>
+
+<p>
+
+    {{if eq (index .StringMap "ip_address") ""}}
+
+    I don't know your IP Address. Please visit <a href="/">home</a> to track your IP Address
+
+    {{else}}
+
+    Your IP Address Is {{index .StringMap "ip_address"}}
+
+    {{end}}
+
+</p>
+{{end}}
