@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	appConfig "github.com/ahmad-mukhlish/annahdloh-landing-page/pkg/config"
-	"github.com/ahmad-mukhlish/annahdloh-landing-page/pkg/handlers"
-	"github.com/ahmad-mukhlish/annahdloh-landing-page/pkg/renders"
+	appConfig "github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/config"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/handlers"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/renders"
 	"github.com/alexedwards/scs/v2"
 )
 
