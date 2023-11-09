@@ -10,21 +10,26 @@ import (
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/model"
 )
 
-var app *config.AppConfig
+var appConfig *config.AppConfig
 
 func SetConfig(a *config.AppConfig) {
-	app = a
+	appConfig = a
 }
 
 func setUpDefaultData(templateData *model.TemplateData) *model.TemplateData {
+
+	stringMap := map[string]string{}
+	stringMap["res_path"] = appConfig.ResRoutePath
+	templateData.StringMap = stringMap
+
 	return templateData
 }
 
 func ServeTemplate(w http.ResponseWriter, templateName string, templateData *model.TemplateData) {
 
 	var allCachedTemplateMap = map[string]*template.Template{}
-	if app.UseCache {
-		allCachedTemplateMap = app.TemplateCache
+	if appConfig.UseCache {
+		allCachedTemplateMap = appConfig.TemplateCache
 	} else {
 		allCachedTemplateMap, _ = CreateTemplateCache()
 	}
@@ -35,6 +40,7 @@ func ServeTemplate(w http.ResponseWriter, templateName string, templateData *mod
 		log.Println("could not get the map")
 	}
 
+	setUpDefaultData(templateData)
 	err := currentTemplatePointer.Execute(w, templateData)
 	if err != nil {
 		log.Println(err)

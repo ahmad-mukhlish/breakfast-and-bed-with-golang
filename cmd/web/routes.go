@@ -22,7 +22,10 @@ func handleRoute(appConfig *config.AppConfig) http.Handler {
 
 	rootDirectoryStaticFile := http.Dir("./res/")
 	staticFileServer := http.FileServer(rootDirectoryStaticFile)
-	router.Handle("/assets/*", http.StripPrefix("/assets", staticFileServer))
+
+	resPath := appConfig.ResRoutePath
+
+	router.Handle(resPath+"*", http.StripPrefix(resPath, staticFileServer))
 
 	return router
 }

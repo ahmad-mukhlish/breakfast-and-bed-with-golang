@@ -53,7 +53,6 @@ func initiateTemplate(
 
 	stringMap["test"] = "this is some string"
 	stringMap[IPAddressKey] = appConfig.Session.GetString(context, IPAddressKey)
-	stringMap["res_path"] = appConfig.ResRoutePath
 
 	templateData := model.TemplateData{
 		StringMap: stringMap,
