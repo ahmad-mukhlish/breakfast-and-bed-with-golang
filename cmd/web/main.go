@@ -36,6 +36,7 @@ func setupConfig() *appConfig.AppConfig {
 	app.TemplateCache = templateCache
 	app.UseCache = useCache
 	app.IsProductionMode = false
+	app.ResRoutePath = "assets/"
 	renders.SetConfig(&app)
 	return &app
 }

@@ -40,7 +40,8 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	IPAddrress := r.RemoteAddr
 	repo.AppConfig.Session.Put(r.Context(), IPAddressKey, IPAddrress)
 
-	renders.ServeTemplate(w, "home.page.tmpl", &model.TemplateData{})
+	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, "home.page.tmpl", initializedTempalte)
 
 }
 
@@ -52,6 +53,7 @@ func initiateTemplate(
 
 	stringMap["test"] = "this is some string"
 	stringMap[IPAddressKey] = appConfig.Session.GetString(context, IPAddressKey)
+	stringMap["res_path"] = appConfig.ResRoutePath
 
 	templateData := model.TemplateData{
 		StringMap: stringMap,

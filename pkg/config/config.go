@@ -12,4 +12,5 @@ type AppConfig struct {
 	InfoLog          *log.Logger
 	IsProductionMode bool
 	Session          *scs.SessionManager
+	ResRoutePath     string
 }
