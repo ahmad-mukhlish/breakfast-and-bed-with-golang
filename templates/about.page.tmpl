@@ -1,20 +1,23 @@
 {{template "base" .}}
 
 {{define "content"}}
-<h1> This is the about page </h1>
-<p> Data from tempalte {{index .StringMap "test"}} </p>
+<div class="container">
+    <h1> This is the about page </h1>
+    <p> Data from template {{index .StringMap "test"}} </p>
 
-<p>
+    <p>
 
-    {{if eq (index .StringMap "ip_address") ""}}
+        {{if eq (index .StringMap "ip_address") ""}}
 
-    I don't know your IP Address. Please visit <a href="/">home</a> to track your IP Address
+        I don't know your IP Address. Please visit <a href="/">home</a> to track your IP Address
 
-    {{else}}
+        {{else}}
 
-    Your IP Address Is {{index .StringMap "ip_address"}}
+        Your IP Address Is {{index .StringMap "ip_address"}}
 
-    {{end}}
+        {{end}}
 
-</p>
+    </p>
+</div>
+
 {{end}}
