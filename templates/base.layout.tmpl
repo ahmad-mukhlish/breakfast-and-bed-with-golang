@@ -15,33 +15,6 @@
     {{block "css" .}} {{end}}
     {{block "js" .}} {{end}}
 
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        header,
-        footer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 50px;
-            flex-grow: 0;
-            flex-shrink: 0;
-            flex-basis: auto;
-            background-color: midnightblue;
-            color: aliceblue
-        }
-
-        main {
-            flex-grow: 1;
-            flex-shrink: 0;
-            flex-basis: auto;
-        }
-    </style>
-
 
 </head>
 
@@ -63,17 +36,17 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="/room" id="dropdownId" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        aria-haspopup="true" aria-expanded="false">Rooms</a>
                     <div class="dropdown-menu" aria-labelledby="dropdownId">
-                        <a class="dropdown-item" href="/room/suite">Action 1</a>
-                        <a class="dropdown-item" href="/room/deluxe">Action 2</a>
+                        <a class="dropdown-item" href="/general">General</a>
+                        <a class="dropdown-item" href="/major">Major</a>
                     </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="/about">Book Now!</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/about">Contact</a>
+                    <a class="nav-link" href="/contact">Contact</a>
                 </li>
             </ul>
         </div>
@@ -89,9 +62,7 @@
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
 
-    <footer class="mt-4 text-center">
-        Made with ❤️ by ahmad-mukhlish
-    </footer>
+   
 
 </body>
 

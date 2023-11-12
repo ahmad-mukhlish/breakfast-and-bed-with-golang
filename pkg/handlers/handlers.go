@@ -35,10 +35,22 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 	renders.ServeTemplate(w, "about.page.tmpl", initializedTempalte)
 }
 
-func (repo *Repository) Learn(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) General(w http.ResponseWriter, r *http.Request) {
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, "learn.page.tmpl", initializedTempalte)
+	renders.ServeTemplate(w, "general.page.tmpl", initializedTempalte)
+}
+
+func (repo *Repository) Major(w http.ResponseWriter, r *http.Request) {
+
+	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, "major.page.tmpl", initializedTempalte)
+}
+
+func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+
+	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, "contact.page.tmpl", initializedTempalte)
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
