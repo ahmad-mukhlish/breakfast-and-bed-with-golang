@@ -63,6 +63,16 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+
+	IPAddrress := r.RemoteAddr
+	repo.AppConfig.Session.Put(r.Context(), IPAddressKey, IPAddrress)
+
+	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, "reservation.page.tmpl", initializedTempalte)
+
+}
+
 func initiateTemplate(
 	appConfig *config.AppConfig,
 	context context.Context) *model.TemplateData {
