@@ -2,22 +2,21 @@
 
 {{define "content"}}
 <div class="mx-auto mt-5 p-5">
-    <h1> This is reservation page </h1>
-    <p> Data from template {{index .StringMap "test"}} </p>
+    <h1> Search for Availability </h1>
 
-    <p>
+    <form action="/reservation" class="mt-3" method="GET">
+        <div class="mb-3">
+          <label for="start_date" class="form-label">Start Date</label>
+          <input type="date" class="form-control" id="start_date" name="start_date" aria-describedby="startDate">
+        </div>
+        <div class="mb-3">
+            <label for="end_date" class="form-label">End Date</label>
+            <input type="date" class="form-control" id="end_date" name="end_date" aria-describedby="endDate">
+          </div>
+      
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+      </form>
 
-        {{if eq (index .StringMap "ip_address") ""}}
-
-        I don't know your IP Address. Please visit <a href="/">home</a> to track your IP Address
-
-        {{else}}
-
-        Your IP Address Is {{index .StringMap "ip_address"}}
-
-        {{end}}
-
-    </p>
 </div>
 
 {{end}}
