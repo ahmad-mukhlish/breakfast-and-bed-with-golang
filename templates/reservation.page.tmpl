@@ -1,18 +1,18 @@
 {{template "base" .}}
 
 {{define "content"}}
-<div class="mx-auto mt-5 p-5 col-9">
+<div class="mx-auto mt-5 p-5 col-6">
   <h1> Please Input Your Data</h1>
 
-  <form action="/reservation" class="mt-3" method="GET">
+  <form action="/reservation" class="mt-3 needs-validation" method="POST" novalidate>
 
-    <div class="row">
+
 
       <div class="col">
 
         <div class="mb-3">
-          <label for="start_date" class="form-label">Start Date</label>
-          <input required type="date" class="form-control" id="start_date" name="start_date" aria-describedby="startDate">
+          <label for="first_name" class="form-label">First Name</label>
+          <input required autocomplete="off" type="text" class="form-control" id="first_namee" name="first_name" aria-describedby="firstName">
         </div>
 
       </div>
@@ -20,16 +20,35 @@
       <div class="col">
 
         <div class="mb-3">
-          <label for="end_date" class="form-label">End Date</label>
-          <input required type="date" class="form-control" id="end_date" name="end_date" aria-describedby="endDate">
+          <label for="last_name" class="form-label">Last Name</label>
+          <input required autocomplete="off" type="text" class="form-control" id="last_name" name="last_name" aria-describedby="lastName">
         </div>
 
       </div>
 
-      <button type="submit" class="btn btn-primary mt-3">Check for availability</button>
+
+      <div class="col">
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input required autocomplete="off" type="email" class="form-control" id="email" name="email" aria-describedby="email">
+        </div>
+
+      </div>
+
+      <div class="col">
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">Phone</label>
+          <input required type="text" autocomplete="off" class="form-control" id="phone" name="phone" aria-describedby="phone">
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-3">Input data</button>
 
 
-    </div>
+
 
 
 
