@@ -1,6 +1,13 @@
 {{template "base" .}}
 
 {{define "content"}}
+
+<style>
+  .red-text {
+    color: red;
+  }
+</style>
+
 <div class="mx-auto mt-5 p-5 col-9">
   <h1> Search for Availability </h1>
 
@@ -28,18 +35,36 @@
       </div>
 
       <button type="submit" class="btn btn-primary mt-3">Check for availability</button>
-    
-
-
 
     </div>
 
-
-
-
-
   </form>
 
+  <div class="mt-4">
+    <p id="text-toggle"> <strong> This is some text </strong> </p>
+    <button id="btn-toggle" type="button" class="btn btn-outline-primary">Button</button>
+  </div>
+
+
 </div>
+
+<script>
+
+  console.log("waduu");
+
+  let button = document.getElementById("btn-toggle");
+
+  button.addEventListener("click", function () {
+
+    let text = document.getElementById("text-toggle");
+
+    if (text.classList.contains("red-text")) {
+      text.classList.remove("red-text");
+    } else {
+      text.classList.add("red-text");
+    }
+  });
+
+</script>
 
 {{end}}
