@@ -60,6 +60,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
 <script src="https://unpkg.com/notie"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 
@@ -72,7 +73,7 @@
   let button = document.getElementById("btn-toggle");
 
   button.addEventListener("click", function () {
-    notify("This is a notification", "success")
+   sweetAlert("Cobaa", "<strong> World Strong </strong>", "success", "Woi")
   });
 
 
@@ -94,7 +95,16 @@
     notie.alert({
       type: msgType,
       text: msg,
-      position : "bottom"
+      position: "bottom"
+    })
+  }
+
+  function sweetAlert(title, html, icon, confirmButtonText) {
+    Swal.fire({
+      title: title,
+      html: html,
+      icon: icon,
+      confirmButtonText: confirmButtonText,
     })
   }
 
