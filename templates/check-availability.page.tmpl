@@ -64,6 +64,8 @@
 
 <script>
 
+  let attention = prompt();
+
   const elem = document.getElementById("range-picker");
   const rangepicker = new DateRangePicker(elem, {
     // ...options
@@ -73,7 +75,7 @@
   let button = document.getElementById("btn-toggle");
 
   button.addEventListener("click", function () {
-   sweetAlert("Cobaa", "<strong> World Strong </strong>", "success", "Woi")
+    attention.success();
   });
 
 
@@ -106,6 +108,23 @@
       icon: icon,
       confirmButtonText: confirmButtonText,
     })
+  }
+
+  function prompt() {
+
+    let toast = function () {
+      console.log("TOASTY");
+    }
+
+    let success = function () {
+      console.log("SAKSESFUL");
+    }
+
+    return {
+      toast : toast,
+      success : success,
+    }
+
   }
 
 </script>
