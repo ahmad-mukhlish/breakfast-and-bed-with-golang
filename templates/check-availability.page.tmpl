@@ -75,7 +75,7 @@
   let button = document.getElementById("btn-toggle");
 
   button.addEventListener("click", function () {
-    attention.toast({ msg: "Pesan", icon : "error"});
+    attention.error("Mantul", "Mantaap");
   });
 
 
@@ -129,13 +129,26 @@
       Toast.fire();
     }
 
-    let success = function () {
-      console.log("SAKSESFUL");
+    let success = function (title, msg) {
+      Swal.fire({
+        title: title ?? "Success",
+        text: msg ?? "You're awesome",
+        icon: "success"
+      });
+    }
+
+    let error = function (title, msg) {
+      Swal.fire({
+        title: title ?? "Success",
+        text: msg ?? "You're awesome",
+        icon: "error"
+      });
     }
 
     return {
       toast: toast,
       success: success,
+      error : error,
     }
 
   }
