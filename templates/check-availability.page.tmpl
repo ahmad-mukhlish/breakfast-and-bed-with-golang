@@ -75,7 +75,7 @@
   let button = document.getElementById("btn-toggle");
 
   button.addEventListener("click", function () {
-    attention.success();
+    attention.toast({ msg: "Pesan", icon : "error"});
   });
 
 
@@ -112,8 +112,21 @@
 
   function prompt() {
 
-    let toast = function () {
-      console.log("TOASTY");
+    let toast = function (param) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: param.pos ?? "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        icon: param.icon ?? "success",
+        title: param.msg ?? "",
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        }
+      });
+      Toast.fire();
     }
 
     let success = function () {
@@ -121,8 +134,8 @@
     }
 
     return {
-      toast : toast,
-      success : success,
+      toast: toast,
+      success: success,
     }
 
   }
