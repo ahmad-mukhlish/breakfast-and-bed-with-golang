@@ -134,7 +134,7 @@
 
       let htmlDate = `
 
-<form action="" class="mt-3 needs-validation px-3" method="GET" novalidate>
+<form name="pickerInside", action="" class="mt-3 needs-validation px-3" method="GET" novalidate>
   <div class="row" id="range-picker-inside">
     <div class="col">
 
@@ -158,13 +158,18 @@
 
   </div>
 </div>
+
+<button type="submit" class="btn btn-primary mt-3">Check for availability</button>
+
+
 </form>
   `;
 
       const { value: formValues } = await Swal.fire({
         title: "Search for Availability",
         html: htmlDate,
-        confirmButtonText : "Check for Availabilty",
+        confirmButtonText: "Check for Availabilty",
+        showConfirmButton: false,
         willOpen: () => {
 
           const elem = document.getElementById("range-picker-inside");
@@ -180,10 +185,18 @@
               if (!form.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
+
+              } else {
+                Swal.clickConfirm();
               }
 
               form.classList.add('was-validated');
+
+
+
             });
+
+
 
           });
         },
@@ -195,7 +208,24 @@
           const end = document.getElementById("end-inside");
           end.removeAttribute("disabled");
 
+          // document.pickerInside.submit();
+
         },
+
+        preConfirm: () => {
+
+
+
+          return [
+
+
+            document.getElementById("start-inside").value,
+            document.getElementById("end-inside").value,
+          ];
+
+        },
+
+
 
       });
 
