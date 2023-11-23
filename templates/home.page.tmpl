@@ -3,71 +3,67 @@
 {{define "content"}}
 
 <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
-            aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
-            aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
-            aria-label="Slide 3"></button>
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+      aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="{{index .StringMap " res_path"}}/images/outside.png" alt="texto" class="d-block w-100" alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        <h5>First slide label</h5>
+        <p>Some representative placeholder content for the first slide.</p>
+      </div>
     </div>
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="{{index .StringMap "res_path"}}/images/outside.png" alt="texto" class="d-block w-100" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>First slide label</h5>
-                <p>Some representative placeholder content for the first slide.</p>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img src="{{index .StringMap "res_path"}}/images/tray.png" alt="texto" class="d-block w-100" alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>Second slide label</h5>
-                <p>Some representative placeholder content for the second slide.</p>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img src="{{index .StringMap "res_path"}}/images/woman-laptop.png" alt="texto" class="d-block w-100"
-                alt="...">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>Third slide label</h5>
-                <p>Some representative placeholder content for the third slide.</p>
-            </div>
-        </div>
+    <div class="carousel-item">
+      <img src="{{index .StringMap " res_path"}}/images/tray.png" alt="texto" class="d-block w-100" alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        <h5>Second slide label</h5>
+        <p>Some representative placeholder content for the second slide.</p>
+      </div>
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
+    <div class="carousel-item">
+      <img src="{{index .StringMap " res_path"}}/images/woman-laptop.png" alt="texto" class="d-block w-100" alt="...">
+      <div class="carousel-caption d-none d-md-block">
+        <h5>Third slide label</h5>
+        <p>Some representative placeholder content for the third slide.</p>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
 </div>
 
 <div class="text-center mt-3 mx-4">
 
-    <h1> Ahoy! Welcome aboard </h1>
-    <p class="mt-2">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Cum itaque obcaecati provident, molestias eligendi
-        earum suscipit non quibusdam? Officia optio eius excepturi aliquam, hic fuga totam nam iste blanditiis
-        aspernatur! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Optio vel error facere quae corporis sit
-        maxime exercitationem saepe culpa totam! Soluta aspernatur optio distinctio dolor quo unde exercitationem
-        aperiam magni? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quos aut consectetur necessitatibus
-        atque. Ab animi doloremque id eos cumque officiis explicabo numquam. Molestiae, culpa eaque ex officiis enim
-        voluptatum dignissimos!</p>
+  <h1> Ahoy! Welcome aboard </h1>
+  <p class="mt-2">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Cum itaque obcaecati provident, molestias
+    eligendi
+    earum suscipit non quibusdam? Officia optio eius excepturi aliquam, hic fuga totam nam iste blanditiis
+    aspernatur! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Optio vel error facere quae corporis sit
+    maxime exercitationem saepe culpa totam! Soluta aspernatur optio distinctio dolor quo unde exercitationem
+    aperiam magni? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quos aut consectetur necessitatibus
+    atque. Ab animi doloremque id eos cumque officiis explicabo numquam. Molestiae, culpa eaque ex officiis enim
+    voluptatum dignissimos!</p>
 
-    <a href="/reservation">
+  <a href="/reservation">
 
-        <button type="button" name="" id="" class="btn btn-primary">Book Now!</button>
+    <button type="button" name="" id="" class="btn btn-primary">Book Now!</button>
 
-    </a>
-
-
+  </a>
 
 </div>
 
 <footer class="mt-4 text-center" style="background-color: midnightblue; color: aliceblue; height: 30px;">
-    Made with ❤️ by ahmad-mukhlish
+  Made with ❤️ by ahmad-mukhlish
 </footer>
 
 

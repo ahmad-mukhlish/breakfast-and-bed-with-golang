@@ -1,35 +1,14 @@
 {{template "base" .}}
 
-
-
-{{define "css"}}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css">
-<link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
-{{end}}
-
 {{define "content"}}
-
-<style>
-  .red-text {
-    color: red;
-  }
-
-  .datepicker-picker {
-    z-index: 10000;
-  }
-</style>
-
 
 <div class="container">
 
     <<div class="row g-3 mt-5">
         <div class="col">
-            <img src="{{index .StringMap "res_path"}}/images/general.png" alt="" srcset=""
+            <img src="{{index .StringMap " res_path"}}/images/general.png" alt="" srcset=""
                 class="room-image img-fluid mx-auto d-block">
         </div>
-
-
-
 
 </div>
 
@@ -45,14 +24,7 @@
         aperiam magni? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quos aut consectetur necessitatibus
         atque. Ab animi doloremque id eos cumque officiis explicabo numquam. Molestiae, culpa eaque ex officiis enim
         voluptatum dignissimos!</p>
-
-
-
     <button type="button" name="" id="check" class="btn btn-primary">Check availability</button>
-
-
-
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
