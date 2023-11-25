@@ -8,6 +8,7 @@ import (
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/model"
+	"github.com/justinas/nosurf"
 )
 
 var appConfig *config.AppConfig
@@ -16,16 +17,17 @@ func SetConfig(a *config.AppConfig) {
 	appConfig = a
 }
 
-func setUpDefaultData(templateData *model.TemplateData) *model.TemplateData {
+func setUpDefaultData(templateData *model.TemplateData, r *http.Request) *model.TemplateData {
 
 	stringMap := map[string]string{}
 	stringMap["res_path"] = appConfig.ResRoutePath
+	stringMap["csrf_token"] = nosurf.Token(r)
 	templateData.StringMap = stringMap
 
 	return templateData
 }
 
-func ServeTemplate(w http.ResponseWriter, templateName string, templateData *model.TemplateData) {
+func ServeTemplate(w http.ResponseWriter, r *http.Request, templateName string, templateData *model.TemplateData) {
 
 	var allCachedTemplateMap = map[string]*template.Template{}
 	if appConfig.UseCache {
@@ -40,7 +42,7 @@ func ServeTemplate(w http.ResponseWriter, templateName string, templateData *mod
 		log.Println("could not get the map")
 	}
 
-	setUpDefaultData(templateData)
+	setUpDefaultData(templateData, r)
 	err := currentTemplatePointer.Execute(w, templateData)
 	if err != nil {
 		log.Println(err)

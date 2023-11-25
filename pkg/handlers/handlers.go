@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/config"
@@ -32,25 +33,25 @@ func CreateHandlers(repository *Repository) {
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, "about.page.tmpl", initializedTempalte)
+	renders.ServeTemplate(w, r, "about.page.tmpl", initializedTempalte)
 }
 
 func (repo *Repository) General(w http.ResponseWriter, r *http.Request) {
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, "general.page.tmpl", initializedTempalte)
+	renders.ServeTemplate(w, r, "general.page.tmpl", initializedTempalte)
 }
 
 func (repo *Repository) Major(w http.ResponseWriter, r *http.Request) {
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, "major.page.tmpl", initializedTempalte)
+	renders.ServeTemplate(w, r, "major.page.tmpl", initializedTempalte)
 }
 
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, "contact.page.tmpl", initializedTempalte)
+	renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTempalte)
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +60,7 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	repo.AppConfig.Session.Put(r.Context(), IPAddressKey, IPAddrress)
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, "home.page.tmpl", initializedTempalte)
+	renders.ServeTemplate(w, r, "home.page.tmpl", initializedTempalte)
 
 }
 
@@ -69,7 +70,7 @@ func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	repo.AppConfig.Session.Put(r.Context(), IPAddressKey, IPAddrress)
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, "reservation.page.tmpl", initializedTempalte)
+	renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTempalte)
 
 }
 
@@ -79,8 +80,16 @@ func (repo *Repository) CheckAvailability(w http.ResponseWriter, r *http.Request
 	repo.AppConfig.Session.Put(r.Context(), IPAddressKey, IPAddrress)
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, "check-availability.page.tmpl", initializedTempalte)
+	renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTempalte)
 
+}
+
+func (repo *Repository) PostCheckAvailability(w http.ResponseWriter, r *http.Request) {
+
+	arrival := r.Form.Get("start")
+	departure := r.Form.Get("end")
+
+	w.Write([]byte(fmt.Sprintf("Your arrival date is %s, your departure date is %s", arrival, departure)))
 }
 
 func initiateTemplate(
