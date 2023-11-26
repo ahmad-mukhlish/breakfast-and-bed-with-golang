@@ -19,12 +19,15 @@ func handleRoute(appConfig *config.AppConfig) http.Handler {
 
 	router.Get("/", handlers.Repo.Home)
 	router.Get("/about", handlers.Repo.About)
+
 	router.Get("/major", handlers.Repo.Major)
 	router.Get("/general", handlers.Repo.General)
 	router.Get("/contact", handlers.Repo.Contact)
 	router.Get("/reservation", handlers.Repo.Reservation)
+
 	router.Get("/check-availability", handlers.Repo.CheckAvailability)
 	router.Post("/check-availability", handlers.Repo.PostCheckAvailability)
+	router.Get("/check-availability/json", handlers.Repo.CheckAvailabilityJSON)
 
 	rootDirectoryStaticFile := http.Dir("./res/")
 	staticFileServer := http.FileServer(rootDirectoryStaticFile)

@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/config"
@@ -90,6 +92,25 @@ func (repo *Repository) PostCheckAvailability(w http.ResponseWriter, r *http.Req
 	departure := r.Form.Get("end")
 
 	w.Write([]byte(fmt.Sprintf("Your arrival date is %s, your departure date is %s", arrival, departure)))
+}
+
+type jsonResponse struct {
+	Ok      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+func (repo *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+
+	response := jsonResponse{Ok: true, Message: "Hello JSON"}
+
+	ouput, err := json.MarshalIndent(response, "", "  ")
+
+	if err != nil {
+		log.Println("error")
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(ouput)
 }
 
 func initiateTemplate(
