@@ -131,7 +131,7 @@
 
                 let htmlDate = `
 
-<form name="pickerInside", action="" class="mt-3 needs-validation px-3" method="GET" novalidate>
+<form name="pickerInside", action="" class="mt-3 needs-validation px-3" novalidate>
   <div class="row" id="range-picker-inside">
     <div class="col">
 
@@ -162,7 +162,7 @@
 </form>
   `;
 
-                const { value: result } = await Swal.fire({
+                await Swal.fire({
                     title: "Search for Availability",
                     html: htmlDate,
                     confirmButtonText: "Check for Availabilty",
@@ -184,6 +184,8 @@
                                     event.stopPropagation();
 
                                 } else {
+                                    event.preventDefault();
+                                    event.stopPropagation();
                                     Swal.clickConfirm();
                                 }
 
@@ -219,29 +221,26 @@
 
 
 
+                }).then(result => {
+
+                    if (callback === undefined) {
+                        return;
+                    }
+
+                    if (result === null) {
+                        callback("");
+                        return;
+                    }
+
+                    if (result.dismiss === Swal.DismissReason.cancel) {
+                        callback("");
+                        return;
+                    }
+
+                    callback(result);
+                    return;
+
                 });
-
-                if (callback === undefined) {
-                    return;
-                }
-
-                if (result === null) {
-                    callback("");
-                    return;
-                }
-
-                if (result.value === "") {
-                    callback("")
-                    return;
-                }
-
-                if (result.dismiss === Swal.DismissReason.cancel) {
-                    callback("");
-                    return;
-                }
-
-                callback(result);
-                return;
 
             }
 

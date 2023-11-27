@@ -101,7 +101,7 @@ type jsonResponse struct {
 
 func (repo *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
-	response := jsonResponse{Ok: true, Message: "Hello JSON"}
+	response := jsonResponse{Ok: true, Message: "Hello JSON brader"}
 
 	ouput, err := json.MarshalIndent(response, "", "  ")
 

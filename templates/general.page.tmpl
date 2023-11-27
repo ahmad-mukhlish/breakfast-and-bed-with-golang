@@ -37,10 +37,12 @@
     let button = document.getElementById("check");
 
     button.addEventListener("click", function () {
-        attention.inputDates(function (result) {
-
-            Swal.fire({ title: result });
-
+        attention.inputDates(res => {
+            fetch('/check-availability/json')
+                .then(response => response.json())
+                .then(jsonData => Swal.fire({
+                    title: jsonData.message,
+                }))
         });
     });
 
