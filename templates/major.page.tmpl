@@ -46,7 +46,11 @@
     let button = document.getElementById("check");
 
     button.addEventListener("click", function () {
-        attention.inputDates("Mantul", "Mantaap");
+        attention.inputDates(function (result) {
+
+            Swal.fire({title : result});
+
+        });
     });
 
 
@@ -102,7 +106,7 @@
             });
         }
 
-        let inputDates = async function () {
+        let inputDates = async function (callback) {
 
 
             let htmlDate = `
@@ -138,7 +142,7 @@
 </form>
   `;
 
-            const { value: formValues } = await Swal.fire({
+            const { value: result } = await Swal.fire({
                 title: "Search for Availability",
                 html: htmlDate,
                 confirmButtonText: "Check for Availabilty",
@@ -186,12 +190,7 @@
                 },
 
                 preConfirm: () => {
-
-
-
                     return [
-
-
                         document.getElementById("start-inside").value,
                         document.getElementById("end-inside").value,
                     ];
@@ -202,9 +201,27 @@
 
             });
 
-            if (formValues) {
-                Swal.fire(JSON.stringify(formValues));
+            if (callback === undefined) {
+                return;
             }
+
+            if (result === null) {
+                callback("");
+                return;
+            }
+
+            if (result.value === "") {
+                callback("")
+                return;
+            }
+
+            if (result.dismiss === Swal.DismissReason.cancel) {
+                callback("");
+                return;
+            }
+
+            callback(result);
+            return;
 
         }
 
