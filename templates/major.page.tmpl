@@ -45,10 +45,23 @@
     let button = document.getElementById("check");
 
     button.addEventListener("click", function () {
-        attention.inputDates(function (result) {
+        attention.inputDates(res => {
 
-            Swal.fire({ title: result });
+            let form = document.getElementById("pickerInsidePopup");
+            let formData = new FormData(form)
+            formData.append("csrf_token",{{index .StringMap "csrf_token"}})
 
+            console.log("wakwa" + formData);
+
+
+            fetch('/check-availability/json', {
+                method: "POST",
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(jsonData => Swal.fire({
+                    title: jsonData.message,
+                }))
         });
     });
 

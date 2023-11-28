@@ -30,6 +30,7 @@
 {{end}}
 
 {{define "js"}}
+
 <script>
 
     let attention = prompt();
@@ -38,7 +39,18 @@
 
     button.addEventListener("click", function () {
         attention.inputDates(res => {
-            fetch('/check-availability/json')
+
+            let form = document.getElementById("pickerInsidePopup");
+            let formData = new FormData(form)
+            formData.append("csrf_token",{{index .StringMap "csrf_token"}})
+
+            console.log("wakwa" + formData);
+
+
+            fetch('/check-availability/json', {
+                method: "POST",
+                body: formData,
+            })
                 .then(response => response.json())
                 .then(jsonData => Swal.fire({
                     title: jsonData.message,
