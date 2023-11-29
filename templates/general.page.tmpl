@@ -42,6 +42,9 @@
 
             let form = document.getElementById("pickerInsidePopup");
             let formData = new FormData(form)
+
+
+            //lint:ignore SA1000 we love invalid regular expressions!
             formData.append("csrf_token",{{index .StringMap "csrf_token"}})
 
             console.log("wakwa" + formData);

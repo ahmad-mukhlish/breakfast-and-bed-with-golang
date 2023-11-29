@@ -7,9 +7,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/config"
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/model"
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/renders"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/renders"
 )
 
 const IPAddressKey = "ip_address"

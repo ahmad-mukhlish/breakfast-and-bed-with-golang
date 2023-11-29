@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/config"
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/pkg/model"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"github.com/justinas/nosurf"
 )
 
