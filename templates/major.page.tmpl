@@ -29,7 +29,7 @@
 
 
     <button type="button" name="" id="check" class="btn btn-primary">Check availability</button>
-
+    <input hidden id="token" value="{{index .StringMap "csrf_token"}}">
 
 
 
@@ -49,10 +49,8 @@
 
             let form = document.getElementById("pickerInsidePopup");
             let formData = new FormData(form)
-            // formData.append("csrf_token",{{index .StringMap "csrf_token"}})
-
-            console.log("wakwa" + formData);
-
+            let tokenElem = document.getElementById("token")
+            formData.append("csrf_token",tokenElem.value)
 
             fetch('/check-availability/json', {
                 method: "POST",
