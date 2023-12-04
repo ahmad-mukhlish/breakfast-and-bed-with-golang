@@ -7,6 +7,7 @@
 
   <form action="/reservation" class="mt-3 needs-validation" method="POST" novalidate>
 
+    <input autocomplete="false" name="csrf_token" type="hidden" value="{{index .StringMap "csrf_token"}}">
     <div class="col">
 
       <div class="mb-3">

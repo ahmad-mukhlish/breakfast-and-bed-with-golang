@@ -24,6 +24,7 @@ func handleRoute(appConfig *config.AppConfig) http.Handler {
 	router.Get("/general", handlers.Repo.General)
 	router.Get("/contact", handlers.Repo.Contact)
 	router.Get("/reservation", handlers.Repo.Reservation)
+	router.Post("/reservation", handlers.Repo.PostReservation)
 
 	router.Get("/check-availability", handlers.Repo.CheckAvailability)
 	router.Post("/check-availability", handlers.Repo.PostCheckAvailability)

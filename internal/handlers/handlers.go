@@ -76,6 +76,10 @@ func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (repo *Repository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
 
 	IPAddrress := r.RemoteAddr
