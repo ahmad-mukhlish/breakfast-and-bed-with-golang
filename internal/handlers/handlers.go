@@ -59,18 +59,12 @@ func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
-	IPAddrress := r.RemoteAddr
-	repo.AppConfig.Session.Put(r.Context(), IPAddressKey, IPAddrress)
-
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
 	renders.ServeTemplate(w, r, "home.page.tmpl", initializedTempalte)
 
 }
 
 func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-
-	IPAddrress := r.RemoteAddr
-	repo.AppConfig.Session.Put(r.Context(), IPAddressKey, IPAddrress)
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
 	renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTempalte)
@@ -79,12 +73,39 @@ func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	reservation := model.Reservation{
+		FirstName: r.Form.Get("first_name"),
+		LastName:  r.Form.Get("last_name"),
+		Email:     r.Form.Get("email"),
+		Phone:     r.Form.Get("phone"),
+	}
+
+	actualForm := form.New(r.PostForm)
+
+	actualForm.HasRequiredField("first_name", r)
+
+	if !actualForm.IsValid() {
+
+		data := make(map[string]interface{})
+		data["reservation"] = reservation
+
+		renders.ServeTemplate(w, r, "reservation.page.tmpl", &model.TemplateData{
+			Data:          data,
+			FormValidator: actualForm,
+		})
+
+		return
+
+	}
 }
 
 func (repo *Repository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
-
-	IPAddrress := r.RemoteAddr
-	repo.AppConfig.Session.Put(r.Context(), IPAddressKey, IPAddrress)
 
 	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
 	renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTempalte)

@@ -6,8 +6,8 @@ import (
 )
 
 type FormValidator struct {
-	data      url.Values
-	formError FormError
+	Data      url.Values
+	FormError FormError
 }
 
 func New(data url.Values) *FormValidator {
@@ -17,11 +17,19 @@ func New(data url.Values) *FormValidator {
 	}
 }
 
-func HasRequiredField(requiredField string, r http.Request) bool {
+func (f *FormValidator) HasRequiredField(requiredField string, r *http.Request) bool {
 
 	result := r.Form.Get(requiredField)
 	isRequiredResultFilled := result != ""
 
+	if !isRequiredResultFilled {
+		f.FormError.Add(requiredField, "This field is mandatory")
+	}
+
 	return isRequiredResultFilled
 
+}
+
+func (f *FormValidator) IsValid() bool {
+	return len(f.FormError) == 0
 }
