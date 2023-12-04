@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/form"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/renders"
 )
@@ -127,7 +128,8 @@ func initiateTemplate(
 	stringMap[IPAddressKey] = appConfig.Session.GetString(context, IPAddressKey)
 
 	templateData := model.TemplateData{
-		StringMap: stringMap,
+		StringMap:     stringMap,
+		FormValidator: form.New(nil),
 	}
 
 	return &templateData

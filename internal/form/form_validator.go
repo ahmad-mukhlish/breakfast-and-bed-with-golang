@@ -1,4 +1,4 @@
-package form_validation
+package form
 
 import (
 	"net/http"
