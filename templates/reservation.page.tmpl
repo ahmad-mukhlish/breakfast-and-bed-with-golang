@@ -7,6 +7,8 @@
 
   <form action="/reservation" class="mt-3 needs-validation" method="POST" novalidate>
 
+    {{$reservation := index .Data "reservation"}}
+
     <input autocomplete="false" name="csrf_token" type="hidden" value="{{index .StringMap "csrf_token"}}">
     <div class="col">
 
@@ -14,31 +16,34 @@
         <label for="first_name" class="form-label">First Name</label>
         <input required autocomplete="off" type="text"
           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "first_name"}} is-invalid {{end}}"
-          id="first_name" name="first_name" aria-describedby="firstName">
+          id="first_name" name="first_name" value="{{$reservation.FirstName}}" aria-describedby="firstName">
         <div class="invalid-feedback">
           {{with .FormValidator.FormError.GetFirstErrorMessage "first_name"}} {{.}} {{end}}
         </div>
       </div>
-
     </div>
 
     <div class="col">
 
       <div class="mb-3">
         <label for="last_name" class="form-label">Last Name</label>
-        <input required autocomplete="off" type="text" class="form-control" id="last_name" name="last_name"
-          aria-describedby="lastName">
+        <input required autocomplete="off" type="text" class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "last_name"}} is-invalid {{end}}" id="last_name" name="last_name"
+          aria-describedby="lastName" value="{{$reservation.LastName}}">
+        <div class="invalid-feedback">
+          {{with .FormValidator.FormError.GetFirstErrorMessage "last_name"}} {{.}} {{end}}
+        </div>
       </div>
-
     </div>
 
 
     <div class="col">
-
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input required autocomplete="off" type="email" class="form-control" id="email" name="email"
-          aria-describedby="email">
+        <input required autocomplete="off" type="email" class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "email"}} is-invalid {{end}}" id="email" name="email"
+          aria-describedby="email" value="{{$reservation.Email}}">
+          <div class="invalid-feedback">
+            {{with .FormValidator.FormError.GetFirstErrorMessage "email"}} {{.}} {{end}}
+          </div>
       </div>
 
     </div>
@@ -47,8 +52,11 @@
 
       <div class="mb-3">
         <label for="phone" class="form-label">Phone</label>
-        <input required type="text" autocomplete="off" class="form-control" id="phone" name="phone"
-          aria-describedby="phone">
+        <input required type="text" autocomplete="off" class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "phone"}} is-invalid {{end}}" id="phone" name="phone"
+          aria-describedby="phone" value="{{$reservation.Email}}">
+          <div class="invalid-feedback">
+            {{with .FormValidator.FormError.GetFirstErrorMessage "phone"}} {{.}} {{end}}
+          </div>
       </div>
 
     </div>

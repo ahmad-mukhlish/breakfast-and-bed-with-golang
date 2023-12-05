@@ -89,6 +89,9 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 	actualForm := form.New(r.PostForm)
 
 	actualForm.HasRequiredField("first_name", r)
+	actualForm.HasRequiredField("last_name", r)
+	actualForm.HasRequiredField("email", r)
+	actualForm.HasRequiredField("phone", r)
 
 	if !actualForm.IsValid() {
 
@@ -148,9 +151,14 @@ func initiateTemplate(
 	stringMap["test"] = "this is some string"
 	stringMap[IPAddressKey] = appConfig.Session.GetString(context, IPAddressKey)
 
+	var emptyReservation model.Reservation
+	data := make(map[string]interface{})
+	data["reservation"] = emptyReservation
+
 	templateData := model.TemplateData{
 		StringMap:     stringMap,
 		FormValidator: form.New(nil),
+		Data:          data,
 	}
 
 	return &templateData
