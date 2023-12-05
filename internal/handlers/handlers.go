@@ -88,6 +88,7 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 
 	actualForm := form.New(r.PostForm)
 
+	actualForm.ValidateLength("first_name", 3)
 	actualForm.Required("first_name", "last_name", "phone")
 
 	if !actualForm.IsValid() {
@@ -101,7 +102,6 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 		})
 
 		return
-
 	}
 }
 

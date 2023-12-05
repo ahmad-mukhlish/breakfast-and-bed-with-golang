@@ -1,6 +1,7 @@
 package form
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 )
@@ -43,5 +44,15 @@ func (f *FormValidator) Required(fields ...string) {
 		}
 
 	}
+
+}
+
+func (f *FormValidator) ValidateLength(field string, minimumLength int) bool {
+
+	if len(f.Data.Get(field)) < minimumLength {
+		f.FormError.Add(field, fmt.Sprintf("The minimum length is %d", minimumLength))
+		return false
+	}
+	return true
 
 }
