@@ -88,10 +88,7 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 
 	actualForm := form.New(r.PostForm)
 
-	actualForm.HasRequiredField("first_name", r)
-	actualForm.HasRequiredField("last_name", r)
-	actualForm.HasRequiredField("email", r)
-	actualForm.HasRequiredField("phone", r)
+	actualForm.Required("first_name", "last_name", "phone")
 
 	if !actualForm.IsValid() {
 

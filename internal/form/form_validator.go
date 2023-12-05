@@ -17,7 +17,7 @@ func New(data url.Values) *FormValidator {
 	}
 }
 
-func (f *FormValidator) HasRequiredField(requiredField string, r *http.Request) bool {
+func (f *FormValidator) Has(requiredField string, r *http.Request) bool {
 
 	result := r.Form.Get(requiredField)
 	isRequiredResultFilled := result != ""
@@ -32,4 +32,16 @@ func (f *FormValidator) HasRequiredField(requiredField string, r *http.Request) 
 
 func (f *FormValidator) IsValid() bool {
 	return len(f.FormError) == 0
+}
+
+func (f *FormValidator) Required(fields ...string) {
+
+	for _, field := range fields {
+
+		if f.Data.Get(field) == "" {
+			f.FormError.Add(field, "This field is Required")
+		}
+
+	}
+
 }
