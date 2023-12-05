@@ -90,6 +90,7 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 
 	actualForm.ValidateLength("first_name", 3)
 	actualForm.Required("first_name", "last_name", "phone")
+	actualForm.ValidateEmail("email")
 
 	if !actualForm.IsValid() {
 

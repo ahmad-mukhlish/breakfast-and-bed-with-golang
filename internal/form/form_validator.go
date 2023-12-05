@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+
+	"github.com/asaskevich/govalidator"
 )
 
 type FormValidator struct {
@@ -54,5 +56,17 @@ func (f *FormValidator) ValidateLength(field string, minimumLength int) bool {
 		return false
 	}
 	return true
+
+}
+
+func (f *FormValidator) ValidateEmail(field string) bool {
+
+	validEmail := govalidator.IsEmail(f.Data.Get(field))
+
+	if !validEmail {
+		f.FormError.Add(field, "This is Not A Valid Email")
+	}
+
+	return validEmail
 
 }

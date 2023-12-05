@@ -53,7 +53,7 @@
       <div class="mb-3">
         <label for="phone" class="form-label">Phone</label>
         <input required type="text" autocomplete="off" class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "phone"}} is-invalid {{end}}" id="phone" name="phone"
-          aria-describedby="phone" value="{{$reservation.Email}}">
+          aria-describedby="phone" value="{{$reservation.Phone}}">
           <div class="invalid-feedback">
             {{with .FormValidator.FormError.GetFirstErrorMessage "phone"}} {{.}} {{end}}
           </div>
