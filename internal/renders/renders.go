@@ -78,7 +78,10 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 		if len(anyLayouts) > 0 {
 
-			templatePointer.ParseGlob(layoutPageDir)
+			_, err := templatePointer.ParseGlob(layoutPageDir)
+			if err != nil {
+				log.Println(err)
+			}
 
 		}
 
