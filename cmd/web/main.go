@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/gob"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"log"
 	"net/http"
 	"time"
@@ -67,6 +69,9 @@ func setupSession() {
 	session.Cookie.Secure = AppConfig.IsProductionMode
 	session.Cookie.Persist = true
 	session.Cookie.SameSite = http.SameSiteLaxMode
+
+	//register custom types here with gob.register
+	gob.Register(model.Reservation{})
 
 	AppConfig.Session = session
 }

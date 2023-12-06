@@ -105,6 +105,9 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 		return
 
 	} else {
+		//store the value of reservation in session
+		repo.AppConfig.Session.Put(r.Context(), "reservation", reservation)
+
 		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 		return
 	}
@@ -112,8 +115,20 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 
 func (repo *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", initializedTemplate)
+	reservationInterface := repo.AppConfig.Session.Get(r.Context(), "reservation")
+
+	reservation, ok := reservationInterface.(model.Reservation)
+	if !ok {
+		log.Println("error parsing data")
+	}
+
+	data := make(map[string]interface{})
+
+	data["reservation"] = reservation
+
+	renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", &model.TemplateData{
+		Data: data,
+	})
 
 }
 

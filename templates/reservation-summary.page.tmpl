@@ -1,6 +1,9 @@
 {{template "base" .}}
 
 {{define "content"}}
+
+    {{$reservation := index .Data "reservation"}}
+
     <div class="mx-auto mt-5 p-5">
         <h1> This is the about page </h1>
     </div>
@@ -12,15 +15,15 @@
             <tbody>
             <tr>
                 <td>Name</td>
-                <td>Doe</td>
+                <td>{{$reservation.FirstName}} {{$reservation.LastName}}</td>
             </tr>
             <tr>
                 <td>Email</td>
-                <td>Smith</td>
+                <td>{{$reservation.Email}}</td>
             </tr>
             <tr>
                 <td>Phone</td>
-                <td>Johnson</td>
+                <td>{{$reservation.Phone}}</td>
             </tr>
 
             <tr>
