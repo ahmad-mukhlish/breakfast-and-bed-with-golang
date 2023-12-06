@@ -115,11 +115,14 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 
 func (repo *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 
-	reservationInterface := repo.AppConfig.Session.Get(r.Context(), "reservation")
+	reservationInterface := repo.AppConfig.Session.Pop(r.Context(), "reservation")
 
 	reservation, ok := reservationInterface.(model.Reservation)
 	if !ok {
 		log.Println("error parsing data")
+
+		repo.AppConfig.Session.Put(r.Context(), "warning", "Please submit your reservation first :)")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 
 	data := make(map[string]interface{})

@@ -17,10 +17,19 @@ func SetConfig(a *config.AppConfig) {
 	appConfig = a
 }
 
-func setUpDefaultData(templateData *model.TemplateData, r *http.Request) *model.TemplateData {
+func setupDefaultData(templateData *model.TemplateData, r *http.Request) *model.TemplateData {
 
 	stringMap := map[string]string{}
 	stringMap["csrf_token"] = nosurf.Token(r)
+
+	errorMessage := appConfig.Session.PopString(r.Context(), "error")
+	flashMessage := appConfig.Session.PopString(r.Context(), "flash")
+	warningMessage := appConfig.Session.PopString(r.Context(), "warning")
+
+	templateData.Error = errorMessage
+	templateData.Flash = flashMessage
+	templateData.Warning = warningMessage
+
 	templateData.StringMap = stringMap
 
 	return templateData
@@ -41,7 +50,7 @@ func ServeTemplate(w http.ResponseWriter, r *http.Request, templateName string, 
 		log.Println("could not get the map")
 	}
 
-	setUpDefaultData(templateData, r)
+	setupDefaultData(templateData, r)
 	err := currentTemplatePointer.Execute(w, templateData)
 	if err != nil {
 		log.Println(err)

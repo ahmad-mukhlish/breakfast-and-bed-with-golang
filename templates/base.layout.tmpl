@@ -82,6 +82,25 @@
             })
         }
 
+        {{with .Error}}
+
+        notify({{.}}, "error")
+
+        {{end}}
+
+        {{with .Flash}}
+
+        notify({{.}}, "success")
+
+        {{end}}
+
+
+        {{with .Warning}}
+
+        notify({{.}}, "warning")
+
+        {{end}}
+
 
         function sweetAlert(title, html, icon, confirmButtonText) {
             Swal.fire({
