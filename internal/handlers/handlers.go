@@ -35,39 +35,39 @@ func CreateHandlers(repository *Repository) {
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 
-	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "about.page.tmpl", initializedTempalte)
+	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
 }
 
 func (repo *Repository) General(w http.ResponseWriter, r *http.Request) {
 
-	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "general.page.tmpl", initializedTempalte)
+	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
 }
 
 func (repo *Repository) Major(w http.ResponseWriter, r *http.Request) {
 
-	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "major.page.tmpl", initializedTempalte)
+	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
 }
 
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
-	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTempalte)
+	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
-	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "home.page.tmpl", initializedTempalte)
+	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
 
 }
 
 func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
-	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTempalte)
+	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTemplate)
 
 }
 
@@ -103,13 +103,24 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 		})
 
 		return
+
+	} else {
+		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+		return
 	}
+}
+
+func (repo *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+
+	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", initializedTemplate)
+
 }
 
 func (repo *Repository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
 
-	initializedTempalte := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTempalte)
+	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
 
 }
 
@@ -136,14 +147,14 @@ func (repo *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Req
 	message := fmt.Sprintf("Your arrival date is %s, your departure date is %s", arrival, departure)
 
 	response := jsonResponse{Ok: true, Message: message}
-	ouput, err := json.MarshalIndent(response, "", "  ")
+	output, err := json.MarshalIndent(response, "", "  ")
 
 	if err != nil {
 		log.Println("error")
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(ouput)
+	_, err = w.Write(output)
 	if err != nil {
 		return
 	}
