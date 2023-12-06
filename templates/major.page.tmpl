@@ -7,7 +7,7 @@
     <div class="container">
         <div class="row g-3 mt-5">
             <div class="col">
-                <img src="{{index .StringMap "res_path"}}/images/majors.png" alt="" srcset=""
+                <img src="/res/images/majors.png" alt="" srcset=""
                      class="room-image img-fluid mx-auto d-block">
             </div>
 
@@ -47,7 +47,7 @@
         let button = document.getElementById("check");
 
         button.addEventListener("click", function () {
-            attention.inputDates(res => {
+            attention.inputDates(_ => {
 
                 let form = document.getElementById("pickerInsidePopup");
                 let formData = new FormData(form)

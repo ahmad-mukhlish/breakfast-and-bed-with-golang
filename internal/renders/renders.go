@@ -20,7 +20,6 @@ func SetConfig(a *config.AppConfig) {
 func setUpDefaultData(templateData *model.TemplateData, r *http.Request) *model.TemplateData {
 
 	stringMap := map[string]string{}
-	stringMap["res_path"] = appConfig.ResRoutePath
 	stringMap["csrf_token"] = nosurf.Token(r)
 	templateData.StringMap = stringMap
 

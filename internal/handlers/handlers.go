@@ -118,7 +118,10 @@ func (repo *Repository) PostCheckAvailability(w http.ResponseWriter, r *http.Req
 	arrival := r.Form.Get("start")
 	departure := r.Form.Get("end")
 
-	w.Write([]byte(fmt.Sprintf("Your arrival date is %s, your departure date is %s", arrival, departure)))
+	_, err := w.Write([]byte(fmt.Sprintf("Your arrival date is %s, your departure date is %s", arrival, departure)))
+	if err != nil {
+		return
+	}
 }
 
 type jsonResponse struct {
@@ -128,8 +131,11 @@ type jsonResponse struct {
 
 func (repo *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
-	response := jsonResponse{Ok: true, Message: "Hello JSON brader"}
+	arrival := r.Form.Get("start")
+	departure := r.Form.Get("end")
+	message := fmt.Sprintf("Your arrival date is %s, your departure date is %s", arrival, departure)
 
+	response := jsonResponse{Ok: true, Message: message}
 	ouput, err := json.MarshalIndent(response, "", "  ")
 
 	if err != nil {
@@ -137,7 +143,10 @@ func (repo *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Req
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(ouput)
+	_, err = w.Write(ouput)
+	if err != nil {
+		return
+	}
 }
 
 func initiateTemplate(

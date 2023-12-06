@@ -3,13 +3,12 @@ package main
 import (
 	"net/http"
 
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func handleRoute(appConfig *config.AppConfig) http.Handler {
+func handleRoute() http.Handler {
 
 	router := chi.NewRouter()
 
@@ -33,9 +32,7 @@ func handleRoute(appConfig *config.AppConfig) http.Handler {
 	rootDirectoryStaticFile := http.Dir("./res/")
 	staticFileServer := http.FileServer(rootDirectoryStaticFile)
 
-	resPath := appConfig.ResRoutePath
-
-	router.Handle(resPath+"*", http.StripPrefix(resPath, staticFileServer))
+	router.Handle("/res"+"*", http.StripPrefix("/res", staticFileServer))
 
 	return router
 }

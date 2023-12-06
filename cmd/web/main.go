@@ -36,7 +36,6 @@ func setupConfig() *appConfig.AppConfig {
 	app.TemplateCache = templateCache
 	app.UseCache = useCache
 	app.IsProductionMode = false
-	app.ResRoutePath = "/assets"
 	renders.SetConfig(&app)
 	return &app
 }
@@ -48,7 +47,7 @@ func setupRepository() {
 
 func serveWithMux() {
 
-	handledRoutes := handleRoute(AppConfig)
+	handledRoutes := handleRoute()
 
 	server := &http.Server{
 		Addr:    port,
