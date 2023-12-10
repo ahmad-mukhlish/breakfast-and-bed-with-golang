@@ -13,9 +13,6 @@ import (
 	"github.com/alexedwards/scs/v2"
 )
 
-const port = ":8080"
-const useCache = false
-
 var AppConfig *appConfig.AppConfig
 
 func main() {
@@ -36,30 +33,10 @@ func setupConfig() *appConfig.AppConfig {
 	}
 
 	app.TemplateCache = templateCache
-	app.UseCache = useCache
+	app.UseCache = false
 	app.IsProductionMode = false
 	renders.SetConfig(&app)
 	return &app
-}
-
-func setupRepository() {
-	repo := handlers.CreateRepository(AppConfig)
-	handlers.CreateHandlers(repo)
-}
-
-func serveWithMux() {
-
-	handledRoutes := handleRoute()
-
-	server := &http.Server{
-		Addr:    port,
-		Handler: handledRoutes,
-	}
-
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func setupSession() {
@@ -74,4 +51,26 @@ func setupSession() {
 	gob.Register(model.Reservation{})
 
 	AppConfig.Session = session
+}
+
+func setupRepository() {
+	repo := handlers.CreateRepository(AppConfig)
+	handlers.CreateHandlers(repo)
+}
+
+func serveWithMux() {
+
+	handledRoutes := handleRoute()
+
+	const port = ":8080"
+
+	server := &http.Server{
+		Addr:    port,
+		Handler: handledRoutes,
+	}
+
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
