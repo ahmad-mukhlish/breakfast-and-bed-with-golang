@@ -16,9 +16,23 @@ import (
 var AppConfig *appConfig.AppConfig
 
 func main() {
+	err := run()
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = serveWithMux()
+
+}
+
+func run() error {
 	var err error
+
 	AppConfig, err = setupConfig()
+	if err != nil {
+		return err
+	}
 
 	if err != nil {
 		log.Fatal(err)
@@ -27,10 +41,7 @@ func main() {
 	setupSession()
 	setupRepository()
 
-	err = serveWithMux()
-	if err != nil {
-		log.Fatal(err)
-	}
+	return err
 
 }
 

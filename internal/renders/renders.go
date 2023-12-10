@@ -60,7 +60,7 @@ func ServeTemplate(w http.ResponseWriter, r *http.Request, templateName string, 
 func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	cachedTemplateMap := map[string]*template.Template{}
-	templatePageDir := "./templates/*.page.tmpl"
+	templatePageDir := "./template/*.page.tmpl"
 	layoutPageDir := "./templates/*.layout.tmpl"
 
 	pages, err := filepath.Glob(templatePageDir)
