@@ -17,26 +17,38 @@ var AppConfig *appConfig.AppConfig
 
 func main() {
 
-	AppConfig = setupConfig()
-	setupSession()
-	setupRepository()
-	serveWithMux()
+	var err error
+	AppConfig, err = setupConfig()
 
-}
-
-func setupConfig() *appConfig.AppConfig {
-	var app appConfig.AppConfig
-
-	templateCache, err := renders.CreateTemplateCache()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	app.TemplateCache = templateCache
+	setupSession()
+	setupRepository()
+
+	err = serveWithMux()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func setupConfig() (*appConfig.AppConfig, error) {
+	var app appConfig.AppConfig
+
 	app.UseCache = false
 	app.IsProductionMode = false
+
+	templateCache, err := renders.CreateTemplateCache()
+	if err != nil {
+		return &app, err
+	}
+
 	renders.SetConfig(&app)
-	return &app
+	app.TemplateCache = templateCache
+
+	return &app, nil
 }
 
 func setupSession() {
@@ -58,7 +70,7 @@ func setupRepository() {
 	handlers.CreateHandlers(repo)
 }
 
-func serveWithMux() {
+func serveWithMux() error {
 
 	handledRoutes := handleRoute()
 
@@ -70,7 +82,6 @@ func serveWithMux() {
 	}
 
 	err := server.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	return err
 }
