@@ -16,17 +16,15 @@ import (
 var AppConfig *appConfig.AppConfig
 
 func main() {
-	err := run()
-
+	err := setupServer()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	err = serveWithMux()
+	_, err = startServer(":8080")
 
 }
 
-func run() error {
+func setupServer() error {
 	var err error
 
 	AppConfig, err = setupConfig()
@@ -43,6 +41,20 @@ func run() error {
 
 	return err
 
+}
+
+func startServer(port string) (*http.Server, error) {
+
+	handledRoutes := handleRoute()
+
+	server := &http.Server{
+		Addr:    port,
+		Handler: handledRoutes,
+	}
+
+	err := server.ListenAndServe()
+
+	return server, err
 }
 
 func setupConfig() (*appConfig.AppConfig, error) {
@@ -79,20 +91,4 @@ func setupSession() {
 func setupRepository() {
 	repo := handlers.CreateRepository(AppConfig)
 	handlers.CreateHandlers(repo)
-}
-
-func serveWithMux() error {
-
-	handledRoutes := handleRoute()
-
-	const port = ":8080"
-
-	server := &http.Server{
-		Addr:    port,
-		Handler: handledRoutes,
-	}
-
-	err := server.ListenAndServe()
-
-	return err
 }
