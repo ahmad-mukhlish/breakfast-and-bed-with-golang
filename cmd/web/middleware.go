@@ -1,25 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
 	"github.com/justinas/nosurf"
+	"net/http"
 )
 
-func printToConsole() {
-	fmt.Println("This is middleware in action")
-}
-
-func WriteToConsole(next http.Handler) http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			printToConsole()
-			next.ServeHTTP(w, r)
-		})
-}
-
-func createCookie() http.Cookie {
+func CreateCookie() http.Cookie {
 	return http.Cookie{
 		HttpOnly: true,
 		Path:     "/",
@@ -30,7 +16,7 @@ func createCookie() http.Cookie {
 
 func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
-	cookie := createCookie()
+	cookie := CreateCookie()
 
 	csrfHandler.SetBaseCookie(cookie)
 	return csrfHandler
