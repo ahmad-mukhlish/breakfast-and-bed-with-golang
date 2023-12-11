@@ -1,6 +1,7 @@
 package renders
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 )
 
 var appConfig *config.AppConfig
+var PathToTemplate = "./templates"
 
 func SetConfig(a *config.AppConfig) {
 	appConfig = a
@@ -60,8 +62,8 @@ func ServeTemplate(w http.ResponseWriter, r *http.Request, templateName string, 
 func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	cachedTemplateMap := map[string]*template.Template{}
-	templatePageDir := "./templates/*.page.tmpl"
-	layoutPageDir := "./templates/*.layout.tmpl"
+	templatePageDir := fmt.Sprintf("%s/*.page.tmpl", PathToTemplate)
+	layoutPageDir := fmt.Sprintf("%s/*.layout.tmpl", PathToTemplate)
 
 	pages, err := filepath.Glob(templatePageDir)
 
