@@ -32,10 +32,6 @@ func setupServer() error {
 		return err
 	}
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	setupSession()
 	setupRepository()
 
