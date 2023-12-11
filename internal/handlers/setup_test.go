@@ -81,7 +81,6 @@ func HandleRoute() http.Handler {
 
 	router := chi.NewRouter()
 
-	router.Use(NoSurf)
 	router.Use(middleware.Recoverer)
 	router.Use(SessionLoad)
 
