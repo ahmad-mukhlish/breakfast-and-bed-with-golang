@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func handleRoute() http.Handler {
+func HandleRoute() http.Handler {
 
 	router := chi.NewRouter()
 

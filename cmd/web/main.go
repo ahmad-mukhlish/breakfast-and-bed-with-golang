@@ -41,7 +41,7 @@ func setupServer() error {
 
 func startServer(port string) (*http.Server, error) {
 
-	handledRoutes := handleRoute()
+	handledRoutes := HandleRoute()
 
 	server := &http.Server{
 		Addr:    port,
