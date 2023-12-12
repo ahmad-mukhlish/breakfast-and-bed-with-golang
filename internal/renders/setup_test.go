@@ -35,3 +35,16 @@ func setupSession() {
 	mockedAppConfig.Session = mockedSession
 	appConfig = &mockedAppConfig
 }
+
+type mockedWriter struct {
+}
+
+func (mw *mockedWriter) Header() http.Header {
+	return http.Header{}
+}
+
+func (mw *mockedWriter) Write([]byte) (int, error) {
+	return 1, nil
+}
+
+func (mw *mockedWriter) WriteHeader(int) {}

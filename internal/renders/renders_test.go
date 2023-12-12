@@ -26,6 +26,29 @@ func TestSetupDefaultData(t *testing.T) {
 
 }
 
+func TestServeTemplate(t *testing.T) {
+
+	r, err := createRequestWithSession()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	PathToTemplate = "./../../templates"
+	mw := mockedWriter{}
+	err = ServeTemplate(&mw, r, "home.page.tmpl", &model.TemplateData{})
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = ServeTemplate(&mw, r, "non-exist.page.tmpl", &model.TemplateData{})
+
+	if err == nil {
+		t.Error("this page should not exist, therefore the error is expected")
+	}
+}
+
 func createRequestWithSession() (*http.Request, error) {
 
 	r, err := http.NewRequest("GET", "/test", nil)
