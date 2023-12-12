@@ -34,6 +34,10 @@ func TestCreateTemplateCache(t *testing.T) {
 
 }
 
+func TestSetConfig(t *testing.T) {
+	SetConfig(appConfig)
+}
+
 func TestServeTemplate(t *testing.T) {
 
 	r, err := createRequestWithSession()
