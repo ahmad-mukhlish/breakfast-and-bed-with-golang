@@ -26,6 +26,14 @@ func TestSetupDefaultData(t *testing.T) {
 
 }
 
+func TestCreateTemplateCache(t *testing.T) {
+	_, err := CreateTemplateCache()
+	if err != nil {
+		t.Error(err)
+	}
+
+}
+
 func TestServeTemplate(t *testing.T) {
 
 	r, err := createRequestWithSession()
