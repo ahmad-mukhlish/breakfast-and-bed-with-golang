@@ -1,6 +1,7 @@
 package renders
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -37,7 +38,7 @@ func SetupDefaultData(templateData *model.TemplateData, r *http.Request) *model.
 	return templateData
 }
 
-func ServeTemplate(w http.ResponseWriter, r *http.Request, templateName string, templateData *model.TemplateData) {
+func ServeTemplate(w http.ResponseWriter, r *http.Request, templateName string, templateData *model.TemplateData) error {
 
 	var allCachedTemplateMap = map[string]*template.Template{}
 	if appConfig.UseCache {
@@ -50,13 +51,17 @@ func ServeTemplate(w http.ResponseWriter, r *http.Request, templateName string, 
 
 	if !inMap {
 		log.Println("could not get the map")
+		return errors.New("could not get the map")
 	}
 
 	SetupDefaultData(templateData, r)
 	err := currentTemplatePointer.Execute(w, templateData)
 	if err != nil {
 		log.Println(err)
+		return err
 	}
+
+	return nil
 }
 
 func CreateTemplateCache() (map[string]*template.Template, error) {

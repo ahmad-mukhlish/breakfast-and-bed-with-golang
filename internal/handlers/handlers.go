@@ -36,38 +36,56 @@ func CreateHandlers(repository *Repository) {
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
+	err := renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
+	if err != nil {
+		return
+	}
 }
 
 func (repo *Repository) General(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
+	err := renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
+	if err != nil {
+		return
+	}
 }
 
 func (repo *Repository) Major(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
+	err := renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
+	if err != nil {
+		return
+	}
 }
 
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
+	err := renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
+	if err != nil {
+		return
+	}
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
+	err := renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
+	if err != nil {
+		return
+	}
 
 }
 
 func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTemplate)
+	err := renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTemplate)
+	if err != nil {
+		return
+	}
 
 }
 
@@ -97,10 +115,13 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
 
-		renders.ServeTemplate(w, r, "reservation.page.tmpl", &model.TemplateData{
+		err = renders.ServeTemplate(w, r, "reservation.page.tmpl", &model.TemplateData{
 			Data:          data,
 			FormValidator: actualForm,
 		})
+		if err != nil {
+			return
+		}
 
 		return
 
@@ -129,16 +150,22 @@ func (repo *Repository) ReservationSummary(w http.ResponseWriter, r *http.Reques
 
 	data["reservation"] = reservation
 
-	renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", &model.TemplateData{
+	err := renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", &model.TemplateData{
 		Data: data,
 	})
+	if err != nil {
+		return
+	}
 
 }
 
 func (repo *Repository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
-	renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
+	err := renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
+	if err != nil {
+		return
+	}
 
 }
 
