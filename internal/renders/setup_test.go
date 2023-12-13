@@ -34,6 +34,7 @@ func setupSession() {
 
 	mockedAppConfig.Session = mockedSession
 	appConfig = &mockedAppConfig
+
 }
 
 type mockedWriter struct {

@@ -39,6 +39,8 @@ var tests = []test{
 		"POST", createDummyPostAvailabilityParams(), http.StatusOK},
 	{"post reservation", "/reservation",
 		"POST", createDummyPostReservationParams(), http.StatusOK},
+	{"post reservation", "/reservation",
+		"POST", createDummyPostReservationInvalidParams(), http.StatusOK},
 }
 
 func createDummyPostAvailabilityParams() []postData {
@@ -54,6 +56,17 @@ func createDummyPostReservationParams() []postData {
 
 	return []postData{
 		{"first_name", "John"},
+		{"last_name", "Doe"},
+		{"email", "john@doe.com"},
+		{"phone", "555-555"},
+	}
+
+}
+
+func createDummyPostReservationInvalidParams() []postData {
+
+	return []postData{
+		{"first_name", ""},
 		{"last_name", "Doe"},
 		{"email", "john@doe.com"},
 		{"phone", "555-555"},
