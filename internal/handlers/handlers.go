@@ -104,20 +104,20 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 		Phone:     r.Form.Get("phone"),
 	}
 
-	actualForm := form.New(r.PostForm)
+	formValidator := form.NewValidator(r.PostForm)
 
-	actualForm.ValidateLength("first_name", 3)
-	actualForm.Required("first_name", "last_name", "phone")
-	actualForm.ValidateEmail("email")
+	formValidator.ValidateLength("first_name", 3)
+	formValidator.Required("first_name", "last_name", "phone")
+	formValidator.ValidateEmail("email")
 
-	if !actualForm.IsValid() {
+	if !formValidator.IsValid() {
 
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
 
 		err = renders.ServeTemplate(w, r, "reservation.page.tmpl", &model.TemplateData{
 			Data:          data,
-			FormValidator: actualForm,
+			FormValidator: formValidator,
 		})
 		if err != nil {
 			return
@@ -220,7 +220,7 @@ func initiateTemplate(
 
 	templateData := model.TemplateData{
 		StringMap:     stringMap,
-		FormValidator: form.New(nil),
+		FormValidator: form.NewValidator(nil),
 		Data:          data,
 	}
 

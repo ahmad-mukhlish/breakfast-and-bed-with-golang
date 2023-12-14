@@ -13,7 +13,7 @@ type FormValidator struct {
 	FormError FormError
 }
 
-func New(data url.Values) *FormValidator {
+func NewValidator(data url.Values) *FormValidator {
 	return &FormValidator{
 		data,
 		FormError(map[string][]string{}),
