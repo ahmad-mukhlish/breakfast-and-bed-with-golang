@@ -1,16 +1,14 @@
 package form
 
 import (
-	"net/http/httptest"
 	"net/url"
 	"testing"
 )
 
 func TestFormValidator_IsValid(t *testing.T) {
-	mockedReq := httptest.NewRequest("POST", "/testo", nil)
-	form := mockedReq.PostForm
+	postForm := url.Values{}
 
-	validator := NewValidator(form)
+	validator := NewValidator(postForm)
 
 	isValid := validator.IsValid()
 
@@ -22,17 +20,13 @@ func TestFormValidator_IsValid(t *testing.T) {
 
 func TestFormValidator_Required(t *testing.T) {
 
-	mockedReq := httptest.NewRequest("POST", "/testo", nil)
-
 	postForm := url.Values{}
 
 	postForm.Add("a", "a")
 	postForm.Add("b", "a")
 	postForm.Add("c", "a")
 
-	mockedReq.PostForm = postForm
-
-	validatorErrorCase := NewValidator(mockedReq.PostForm)
+	validatorErrorCase := NewValidator(postForm)
 
 	validatorErrorCase.Required("a", "zzz")
 
@@ -42,7 +36,13 @@ func TestFormValidator_Required(t *testing.T) {
 		t.Errorf("Should not passed, error expected")
 	}
 
-	validatorPassedCase := NewValidator(mockedReq.PostForm)
+	errorMessage := validatorErrorCase.FormError.GetFirstErrorMessage("zzz")
+
+	if errorMessage == "" {
+		t.Errorf("Expected error message is filled, because zzz is required but not filled")
+	}
+
+	validatorPassedCase := NewValidator(postForm)
 
 	validatorPassedCase.Required("a", "b", "c")
 
@@ -50,6 +50,12 @@ func TestFormValidator_Required(t *testing.T) {
 
 	if !passedCase {
 		t.Errorf("Should be passed")
+	}
+
+	errorMessageEmpty := validatorPassedCase.FormError.GetFirstErrorMessage("a")
+
+	if errorMessageEmpty != "" {
+		t.Errorf("Expected error message is none, because the form should be valid")
 	}
 
 }

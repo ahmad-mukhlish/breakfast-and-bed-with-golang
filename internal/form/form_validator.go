@@ -2,7 +2,6 @@ package form
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 
 	"github.com/asaskevich/govalidator"
@@ -16,13 +15,13 @@ type FormValidator struct {
 func NewValidator(data url.Values) *FormValidator {
 	return &FormValidator{
 		data,
-		FormError(map[string][]string{}),
+		map[string][]string{},
 	}
 }
 
-func (f *FormValidator) Has(requiredField string, r *http.Request) bool {
+func (f *FormValidator) Has(requiredField string) bool {
 
-	result := r.Form.Get(requiredField)
+	result := f.Data.Get(requiredField)
 	isRequiredResultFilled := result != ""
 
 	if !isRequiredResultFilled {
