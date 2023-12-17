@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/gob"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	appConfig "github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
@@ -34,6 +36,7 @@ func setupServer() error {
 
 	setupSession()
 	setupRepository()
+	setupLogger()
 
 	return err
 
@@ -87,4 +90,11 @@ func setupSession() {
 func setupRepository() {
 	repo := handlers.CreateRepository(AppConfig)
 	handlers.CreateHandlers(repo)
+}
+
+func setupLogger() {
+	AppConfig.InfoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	AppConfig.ErrorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	helper.SetHelperAppConfig(AppConfig)
 }
