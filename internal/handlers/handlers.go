@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,8 +11,6 @@ import (
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/renders"
 )
-
-const IPAddressKey = "ip_address"
 
 type Repository struct {
 	AppConfig *config.AppConfig
@@ -35,7 +32,7 @@ func CreateHandlers(repository *Repository) {
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
 	if err != nil {
 		return
@@ -44,7 +41,7 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) General(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
 	if err != nil {
 		return
@@ -53,7 +50,7 @@ func (repo *Repository) General(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Major(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
 	if err != nil {
 		return
@@ -62,7 +59,7 @@ func (repo *Repository) Major(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
 	if err != nil {
 		return
@@ -71,7 +68,7 @@ func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
 	if err != nil {
 		return
@@ -81,7 +78,7 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTemplate)
 	if err != nil {
 		return
@@ -161,7 +158,7 @@ func (repo *Repository) ReservationSummary(w http.ResponseWriter, r *http.Reques
 
 func (repo *Repository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate(repo.AppConfig, r.Context())
+	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
 	if err != nil {
 		return
@@ -205,21 +202,13 @@ func (repo *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Req
 	}
 }
 
-func initiateTemplate(
-	appConfig *config.AppConfig,
-	context context.Context) *model.TemplateData {
-
-	stringMap := map[string]string{}
-
-	stringMap["test"] = "this is some string"
-	stringMap[IPAddressKey] = appConfig.Session.GetString(context, IPAddressKey)
+func initiateTemplate() *model.TemplateData {
 
 	var emptyReservation model.Reservation
 	data := make(map[string]interface{})
 	data["reservation"] = emptyReservation
 
 	templateData := model.TemplateData{
-		StringMap:     stringMap,
 		FormValidator: form.NewValidator(nil),
 		Data:          data,
 	}
