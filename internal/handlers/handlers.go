@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/form"
@@ -227,4 +229,11 @@ func initiateTemplate() *model.TemplateData {
 
 	return &templateData
 
+}
+
+func setupLogger() {
+	Repo.AppConfig.InfoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	Repo.AppConfig.ErrorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	helper.SetHelperAppConfig(Repo.AppConfig)
 }

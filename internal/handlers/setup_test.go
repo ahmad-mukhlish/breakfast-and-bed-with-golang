@@ -36,6 +36,7 @@ func setupServer() error {
 
 	setupSession()
 	setupRepository()
+	setupLogger()
 
 	return err
 
