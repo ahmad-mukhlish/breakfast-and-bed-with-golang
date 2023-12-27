@@ -9,13 +9,13 @@ import (
 	"os"
 	"time"
 
-	appConfig "github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/handlers"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/renders"
 	"github.com/alexedwards/scs/v2"
 )
 
-var AppConfig *appConfig.AppConfig
+var AppConfig *config.AppConfig
 
 func main() {
 	err := setupServer()
@@ -56,8 +56,8 @@ func startServer(port string) (*http.Server, error) {
 	return server, err
 }
 
-func setupConfig() (*appConfig.AppConfig, error) {
-	var app appConfig.AppConfig
+func setupConfig() (*config.AppConfig, error) {
+	var app config.AppConfig
 
 	app.UseCache = false
 	app.IsProductionMode = false
