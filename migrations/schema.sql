@@ -309,6 +309,34 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: room_restrictions_reservation_id_idx; Type: INDEX; Schema: public; Owner: ahmadmukhlis
+--
+
+CREATE INDEX room_restrictions_reservation_id_idx ON public.room_restrictions USING btree (reservation_id);
+
+
+--
+-- Name: room_restrictions_restriction_id_idx; Type: INDEX; Schema: public; Owner: ahmadmukhlis
+--
+
+CREATE INDEX room_restrictions_restriction_id_idx ON public.room_restrictions USING btree (restriction_id);
+
+
+--
+-- Name: room_restrictions_room_id_idx; Type: INDEX; Schema: public; Owner: ahmadmukhlis
+--
+
+CREATE INDEX room_restrictions_room_id_idx ON public.room_restrictions USING btree (room_id);
+
+
+--
+-- Name: room_restrictions_start_date_end_date_idx; Type: INDEX; Schema: public; Owner: ahmadmukhlis
+--
+
+CREATE INDEX room_restrictions_start_date_end_date_idx ON public.room_restrictions USING btree (start_date, end_date);
+
+
+--
 -- Name: schema_migration_version_idx; Type: INDEX; Schema: public; Owner: ahmadmukhlis
 --
 
