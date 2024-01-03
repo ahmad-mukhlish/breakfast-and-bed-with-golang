@@ -309,6 +309,20 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: reservations_email_idx; Type: INDEX; Schema: public; Owner: ahmadmukhlis
+--
+
+CREATE INDEX reservations_email_idx ON public.reservations USING btree (email);
+
+
+--
+-- Name: reservations_first_name_idx; Type: INDEX; Schema: public; Owner: ahmadmukhlis
+--
+
+CREATE INDEX reservations_first_name_idx ON public.reservations USING btree (first_name);
+
+
+--
 -- Name: room_restrictions_reservation_id_idx; Type: INDEX; Schema: public; Owner: ahmadmukhlis
 --
 
