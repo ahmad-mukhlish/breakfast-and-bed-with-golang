@@ -1,4 +1,4 @@
-package db
+package dbrepo
 
 import (
 	"database/sql"
@@ -9,9 +9,9 @@ type postgresDBRepository struct {
 	DB *sql.DB
 }
 
-func NewPostgresDBRepository(dbConnection *sql.DB) repository.DatabaseRepository {
+func NewPostgresDBRepository(dbPool *sql.DB) repository.DatabaseRepository {
 
 	return &postgresDBRepository{
-		DB: dbConnection,
+		DB: dbPool,
 	}
 }

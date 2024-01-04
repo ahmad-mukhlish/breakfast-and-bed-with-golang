@@ -5,6 +5,7 @@ import (
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/driver"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository/dbrepo"
 	"log"
 	"net/http"
 	"os"
@@ -24,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("connected to db")
+	log.Println("connected to dbrepo")
 	_, err = startServer(":8080")
 
 }
@@ -38,12 +39,13 @@ func setupServer() (*driver.DB, error) {
 	}
 
 	setupSession()
-	setupRepository()
-	setupLogger()
-	db, err := setupDB()
+
+	db, err := setupRepository()
 	if err != nil {
 		return nil, err
 	}
+
+	setupLogger()
 
 	return db, err
 
@@ -94,9 +96,18 @@ func setupSession() {
 	AppConfig.Session = session
 }
 
-func setupRepository() {
-	repo := handlers.CreateRepository(AppConfig)
-	handlers.CreateHandlers(repo)
+func setupRepository() (*driver.DB, error) {
+
+	db, err := setupDB()
+	if err != nil {
+		return nil, err
+	}
+	dbRepository := dbrepo.NewPostgresDBRepository(db.DbPool)
+
+	hRepo := handlers.CreateRepository(AppConfig, dbRepository)
+	handlers.CreateHandlers(hRepo)
+
+	return db, err
 }
 
 func setupLogger() {
@@ -107,7 +118,7 @@ func setupLogger() {
 }
 
 func setupDB() (*driver.DB, error) {
-	log.Println("connecting to db")
+	log.Println("connecting to dbrepo")
 	dbPath := "host=localhost port=54321 dbname=bookings user=ahmadmukhlis password=password"
 	db, err := driver.ConnectSQL(dbPath)
 	if err != nil {

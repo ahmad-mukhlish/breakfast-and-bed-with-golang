@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository"
 	"log"
 	"net/http"
 	"os"
@@ -14,25 +15,30 @@ import (
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/renders"
 )
 
-type Repository struct {
-	AppConfig *config.AppConfig
+type HandlerRepository struct {
+	AppConfig    *config.AppConfig
+	DBRepository repository.DatabaseRepository
 }
 
-var Repo *Repository
+var Repo *HandlerRepository
 
-func CreateRepository(appConfig *config.AppConfig) *Repository {
+func CreateRepository(appConfig *config.AppConfig, dbrepository repository.DatabaseRepository) *HandlerRepository {
 
-	return &Repository{
-		AppConfig: appConfig,
+	return &HandlerRepository{
+		AppConfig:    appConfig,
+		DBRepository: dbrepository,
 	}
 
 }
 
-func CreateHandlers(repository *Repository) {
+func CreateHandlers(repository *HandlerRepository) {
 	Repo = repository
 }
 
-func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) About(w http.ResponseWriter, r *http.Request) {
+
+	var check = m.DBRepository.GetUsers()
+	fmt.Print(check)
 
 	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
@@ -40,9 +46,10 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 		helper.CatchServerError(w, err)
 		return
 	}
+
 }
 
-func (repo *Repository) General(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) General(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
@@ -52,7 +59,7 @@ func (repo *Repository) General(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (repo *Repository) Major(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) Major(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
@@ -62,7 +69,7 @@ func (repo *Repository) Major(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) Contact(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
@@ -72,7 +79,7 @@ func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) Home(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
@@ -83,7 +90,7 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTemplate)
@@ -94,7 +101,7 @@ func (repo *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 
@@ -134,21 +141,21 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 
 	} else {
 		//store the value of reservation in session
-		repo.AppConfig.Session.Put(r.Context(), "reservation", reservation)
+		m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
 
 		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 		return
 	}
 }
 
-func (repo *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 
-	reservationInterface := repo.AppConfig.Session.Pop(r.Context(), "reservation")
+	reservationInterface := m.AppConfig.Session.Pop(r.Context(), "reservation")
 
 	reservation, ok := reservationInterface.(model.Reservation)
 	if !ok {
-		repo.AppConfig.ErrorLog.Println("error parsing data")
-		repo.AppConfig.Session.Put(r.Context(), "warning", "Please submit your reservation first :)")
+		m.AppConfig.ErrorLog.Println("error parsing data")
+		m.AppConfig.Session.Put(r.Context(), "warning", "Please submit your reservation first :)")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 
@@ -166,7 +173,7 @@ func (repo *Repository) ReservationSummary(w http.ResponseWriter, r *http.Reques
 
 }
 
-func (repo *Repository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
@@ -177,7 +184,7 @@ func (repo *Repository) CheckAvailability(w http.ResponseWriter, r *http.Request
 
 }
 
-func (repo *Repository) PostCheckAvailability(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http.Request) {
 
 	arrival := r.Form.Get("start")
 	departure := r.Form.Get("end")
@@ -194,7 +201,7 @@ type jsonResponse struct {
 	Message string `json:"message"`
 }
 
-func (repo *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 	arrival := r.Form.Get("start")
 	departure := r.Form.Get("end")
