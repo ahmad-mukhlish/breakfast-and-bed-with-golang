@@ -10,7 +10,7 @@ import (
 )
 
 type DB struct {
-	dbPool *sql.DB
+	DbPool *sql.DB
 }
 
 var dbConn = &DB{}
@@ -30,8 +30,8 @@ func ConnectSQL(dbPath string) (*DB, error) {
 	dbPool.SetMaxIdleConns(maxIdleDbConn)
 	dbPool.SetConnMaxLifetime(maxDbLifeTime)
 
-	dbConn.dbPool = dbPool
-	err = testDB(dbConn.dbPool)
+	dbConn.DbPool = dbPool
+	err = testDB(dbConn.DbPool)
 	if err != nil {
 		return nil, err
 	}
