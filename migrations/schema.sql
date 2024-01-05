@@ -68,7 +68,7 @@ ALTER SEQUENCE public.reservations_id_seq OWNED BY public.reservations.id;
 
 CREATE TABLE public.restrictions (
     id integer NOT NULL,
-    room_name character varying(255) NOT NULL,
+    restriction_name character varying(255) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
