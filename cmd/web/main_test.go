@@ -5,7 +5,7 @@ import (
 )
 
 func TestSetupServer(t *testing.T) {
-	err := setupServer()
+	_, err := setupServer()
 	if err != nil {
 		t.Error("unexpected error:", err)
 	}

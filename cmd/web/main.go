@@ -92,6 +92,11 @@ func setupSession() {
 
 	//register custom types here with gob.register
 	gob.Register(model.Reservation{})
+	gob.Register(model.TemplateData{})
+	gob.Register(model.Room{})
+	gob.Register(model.Restriction{})
+	gob.Register(model.User{})
+	gob.Register(model.RoomRestriction{})
 
 	AppConfig.Session = session
 }

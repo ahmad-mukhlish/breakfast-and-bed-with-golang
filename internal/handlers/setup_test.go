@@ -74,6 +74,7 @@ func setupSession() {
 }
 
 func setupRepository() {
+	//TODO @ahmad-mukhlis to be fixed
 	repo := CreateRepository(AppConfig)
 	CreateHandlers(repo)
 }
