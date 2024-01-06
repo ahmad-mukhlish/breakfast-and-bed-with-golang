@@ -2,14 +2,7 @@ package model
 
 import "time"
 
-type Reservation struct {
-	FirstName string
-	LastName  string
-	Phone     string
-	Email     string
-}
-
-type Users struct {
+type User struct {
 	Id          int
 	FirstName   string
 	LastName    string
@@ -20,21 +13,21 @@ type Users struct {
 	AccessLevel int
 }
 
-type Rooms struct {
+type Room struct {
 	Id        int
 	RoomName  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-type Restrictions struct {
+type Restriction struct {
 	Id              int
 	RestrictionName string
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }
 
-type Reservations struct {
+type Reservation struct {
 	Id        int
 	FirstName string
 	LastName  string
@@ -43,21 +36,21 @@ type Reservations struct {
 	StartDate time.Time
 	EndDate   time.Time
 	RoomId    int
-	Room      Rooms
+	Room      Room
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-type RoomRestrictions struct {
+type RoomRestriction struct {
 	Id            int
 	StartDate     time.Time
 	EndDate       time.Time
 	RoomId        int
-	Room          Rooms
+	Room          Room
 	ReservationId int
-	Reservation   Reservations
+	Reservation   Reservation
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	RestrictionId int
-	Restriction   Restrictions
+	Restriction   Restriction
 }
