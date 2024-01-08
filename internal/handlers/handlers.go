@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/form"
@@ -110,11 +112,32 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	sd := r.Form.Get("start_date")
+	ed := r.Form.Get("end_date")
+
+	layout := "2006-01-02"
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helper.CatchServerError(w, err)
+	}
+
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helper.CatchServerError(w, err)
+	}
+	roomId, err := strconv.Atoi(r.Form.Get("room_id"))
+	if err != nil {
+		helper.CatchServerError(w, err)
+	}
+
 	reservation := model.Reservation{
 		FirstName: r.Form.Get("first_name"),
 		LastName:  r.Form.Get("last_name"),
 		Email:     r.Form.Get("email"),
 		Phone:     r.Form.Get("phone"),
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomId:    roomId,
 	}
 
 	formValidator := form.NewValidator(r.PostForm)
@@ -141,6 +164,10 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 
 	} else {
 		//store the value of reservation in session
+		dbErr := m.DBRepository.InsertReservation(reservation)
+		if dbErr != nil {
+			helper.CatchServerError(w, err)
+		}
 		m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
 
 		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
