@@ -12,12 +12,12 @@ func (m *postgresDBRepository) GetUsers() bool {
 
 func (m *postgresDBRepository) InsertReservation(reservation model.Reservation) error {
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
 	defer cancel()
 
 	query := `INSERT 
 			into 
-    		reservation (first_name, last_name, email, phone, 
+    		reservations (first_name, last_name, email, phone, 
                  start_date, end_date, room_id, created_at, updated_at) 
 			values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 

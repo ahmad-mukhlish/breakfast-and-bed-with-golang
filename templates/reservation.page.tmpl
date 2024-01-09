@@ -38,6 +38,37 @@
                 </div>
             </div>
 
+            <div class="col">
+
+                <div class="mb-3">
+                    <label for="start_date" class="form-label">Start Date</label>
+                    <input required autocomplete="off" type="text"
+                           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "start_date"}} is-invalid {{end}}"
+                           id="start_date" name="start_date"
+                           aria-describedby="startDate" value="{{$reservation.StartDate}}">
+                    <div class="invalid-feedback">
+                        {{with .FormValidator.FormError.GetFirstErrorMessage "start_date"}} {{.}} {{end}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+
+                <div class="mb-3">
+                    <label for="end_date" class="form-label">End date</label>
+                    <input required autocomplete="off" type="text"
+                           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "end_date"}} is-invalid {{end}}"
+                           id="end_date" name="end_date"
+                           aria-describedby="endDate" value="{{$reservation.EndDate}}">
+                    <div class="invalid-feedback">
+                        {{with .FormValidator.FormError.GetFirstErrorMessage "end_date"}} {{.}} {{end}}
+                    </div>
+                </div>
+            </div>
+
+            <input autocomplete="false" name="room_id" type="hidden" value="1">
+
+
 
             <div class="col">
                 <div class="mb-3">
