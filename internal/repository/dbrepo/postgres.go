@@ -10,20 +10,49 @@ func (m *postgresDBRepository) GetUsers() bool {
 	return true
 }
 
-func (m *postgresDBRepository) InsertReservation(reservation model.Reservation) error {
+func (m *postgresDBRepository) InsertReservation(reservation model.Reservation) (int, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
+	defer cancel()
+
+	var newId int
+
+	query := `INSERT 
+			into 
+    		reservations (first_name, last_name, email, phone, 
+                 start_date, end_date, room_id, created_at, updated_at) 
+			values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id`
+
+	rowContext := m.DB.QueryRowContext(ctx, query, reservation.FirstName,
+		reservation.LastName, reservation.Email, reservation.Phone,
+		reservation.StartDate, reservation.EndDate, reservation.RoomId, time.Now(), time.Now())
+
+	if rowContext.Err() != nil {
+		return 0, rowContext.Err()
+	}
+
+	err := rowContext.Scan(&newId)
+	if err != nil {
+		return 0, err
+	}
+
+	return newId, nil
+}
+
+func (m *postgresDBRepository) InsertRoomRestriction(roomRestriction model.RoomRestriction) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
 	defer cancel()
 
 	query := `INSERT 
 			into 
-    		reservations (first_name, last_name, email, phone, 
-                 start_date, end_date, room_id, created_at, updated_at) 
-			values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+    		room_restrictions (
+                 start_date, end_date, room_id, reservation_id, restriction_id, created_at, updated_at) 
+			values ($1, $2, $3, $4, $5, $6, $7)`
 
-	_, err := m.DB.ExecContext(ctx, query, reservation.FirstName,
-		reservation.LastName, reservation.Email, reservation.Phone,
-		reservation.StartDate, reservation.EndDate, reservation.RoomId, time.Now(), time.Now())
+	_, err := m.DB.ExecContext(ctx, query, roomRestriction.StartDate,
+		roomRestriction.EndDate, roomRestriction.RoomId, roomRestriction.ReservationId,
+		roomRestriction.RestrictionId, time.Now(), time.Now())
 
 	if err != nil {
 		return err

@@ -119,15 +119,18 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 	startDate, err := time.Parse(layout, sd)
 	if err != nil {
 		helper.CatchServerError(w, err)
+		return
 	}
 
 	endDate, err := time.Parse(layout, ed)
 	if err != nil {
 		helper.CatchServerError(w, err)
+		return
 	}
 	roomId, err := strconv.Atoi(r.Form.Get("room_id"))
 	if err != nil {
 		helper.CatchServerError(w, err)
+		return
 	}
 
 	reservation := model.Reservation{
@@ -164,10 +167,26 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 
 	} else {
 		//store the value of reservation in session
-		dbErr := m.DBRepository.InsertReservation(reservation)
+		reservationId, dbErr := m.DBRepository.InsertReservation(reservation)
 		if dbErr != nil {
 			helper.CatchServerError(w, err)
+			return
 		}
+
+		roomRestriction := model.RoomRestriction{
+			StartDate:     startDate,
+			EndDate:       endDate,
+			RoomId:        roomId,
+			ReservationId: reservationId,
+			RestrictionId: 1,
+		}
+
+		err = m.DBRepository.InsertRoomRestriction(roomRestriction)
+		if err != nil {
+			helper.CatchServerError(w, err)
+			return
+		}
+
 		m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
 
 		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
