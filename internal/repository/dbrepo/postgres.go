@@ -59,3 +59,62 @@ func (m *postgresDBRepository) InsertRoomRestriction(roomRestriction model.RoomR
 	}
 	return nil
 }
+
+func (m *postgresDBRepository) CheckAvailabilityForRoom(startDate, endDate string, roomId int) (bool, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
+	defer cancel()
+
+	// is not available if :
+
+	// end date db >= start date params
+	// AND
+	// end date params >= start date db
+
+	//examples:
+
+	//db 			: 5 6 7 8
+	//params        : 5 6 7 8
+
+	//db 			: 5 6 7 8
+	//params        :   6 7
+
+	//db 			:   5 6 7 8
+	//params        : 4 5 6 7 8 9
+
+	//db 			: 5 6 7 8
+	//params        :     7 8 9
+
+	//db 			:   5 6 7 8
+	//params        : 4 5 6
+
+	//avails:
+
+	//db 			:   5 6 7 8
+	//params        : 4         (end date params [4] < start date db [5])
+
+	//db 			:   5 6 7 8
+	//params        :           9 10 (end date db [8] < start date params [9])
+
+	query := `select 
+			  count(id)
+			  from room_restrictions
+			  where     
+			  end_date >= $1 and $2 >= start_date 
+			  and room_id = $3; `
+
+	rowContext := m.DB.QueryRowContext(ctx, query, startDate, endDate, roomId)
+
+	var count int
+
+	if rowContext.Err() != nil {
+		return false, rowContext.Err()
+	}
+
+	err := rowContext.Scan(&count)
+	if err != nil {
+		return false, err
+	}
+
+	return count == 0, err
+}
