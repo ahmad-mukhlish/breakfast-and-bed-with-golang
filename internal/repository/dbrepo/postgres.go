@@ -118,3 +118,46 @@ func (m *postgresDBRepository) CheckAvailabilityForRoomById(startDate, endDate s
 
 	return count == 0, err
 }
+
+func (m *postgresDBRepository) GetAvailableRooms(startDate, endDate string) ([]model.Room, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
+	defer cancel()
+
+	query := `	select r.id, r.room_name
+				from rooms r
+				where r.id not in (
+					select 
+					rr.room_id
+					from room_restrictions rr
+					where 
+					end_date >= $1 and $2 > start_date
+				);`
+
+	rows, err := m.DB.QueryContext(ctx, query, startDate, endDate)
+
+	var rooms []model.Room
+
+	if err != nil {
+		return rooms, err
+	}
+
+	//next is move the pointer for scan to next row
+	for rows.Next() {
+
+		var room model.Room
+		err = rows.Scan(&room.Id, &room.RoomName)
+		if err != nil {
+			return rooms, err
+		}
+
+		rooms = append(rooms, room)
+
+	}
+
+	if err = rows.Err(); err != nil {
+		return rooms, err
+	}
+
+	return rooms, nil
+}
