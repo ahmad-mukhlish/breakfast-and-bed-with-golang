@@ -60,7 +60,7 @@ func (m *postgresDBRepository) InsertRoomRestriction(roomRestriction model.RoomR
 	return nil
 }
 
-func (m *postgresDBRepository) CheckAvailabilityForRoom(startDate, endDate string, roomId int) (bool, error) {
+func (m *postgresDBRepository) CheckAvailabilityForRoomById(startDate, endDate string, roomId int) (bool, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
 	defer cancel()

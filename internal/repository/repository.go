@@ -6,5 +6,5 @@ type DatabaseRepository interface {
 	GetUsers() bool
 	InsertReservation(reservation model.Reservation) (int, error)
 	InsertRoomRestriction(reservation model.RoomRestriction) error
-	CheckAvailabilityForRoom(startDate, endDate string, roomId int) (bool, error)
+	CheckAvailabilityForRoomById(startDate, endDate string, roomId int) (bool, error)
 }

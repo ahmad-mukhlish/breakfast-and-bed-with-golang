@@ -94,7 +94,7 @@ func setupSession() {
 //	router.Post("/reservation", handlers.Repo.PostReservation)
 //	router.Get("/reservation-summary", handlers.Repo.ReservationSummary)
 //
-//	router.Get("/check-availability", handlers.Repo.CheckAvailabilityForRoom)
+//	router.Get("/check-availability", handlers.Repo.CheckAvailabilityForRoomById)
 //	router.Post("/check-availability", handlers.Repo.PostCheckAvailability)
 //	router.Post("/check-availability/json", handlers.Repo.CheckAvailabilityJSON)
 //
