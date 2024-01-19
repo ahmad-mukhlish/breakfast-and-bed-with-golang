@@ -115,14 +115,14 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 	sd := r.Form.Get("start_date")
 	ed := r.Form.Get("end_date")
 
-	layout := "2006-01-02"
-	startDate, err := time.Parse(layout, sd)
+	dateFormat := "2006-01-02"
+	startDate, err := time.Parse(dateFormat, sd)
 	if err != nil {
 		helper.CatchServerError(w, err)
 		return
 	}
 
-	endDate, err := time.Parse(layout, ed)
+	endDate, err := time.Parse(dateFormat, ed)
 	if err != nil {
 		helper.CatchServerError(w, err)
 		return
@@ -234,12 +234,20 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 
 	arrival := r.Form.Get("start")
 	departure := r.Form.Get("end")
+	rooms, err := m.DBRepository.GetAvailableRooms(arrival, departure)
 
-	_, err := w.Write([]byte(fmt.Sprintf("Your arrival date is %s, your departure date is %s", arrival, departure)))
 	if err != nil {
 		helper.CatchServerError(w, err)
 		return
 	}
+
+	if len(rooms) > 0 {
+
+	} else {
+		m.AppConfig.Session.Put(r.Context(), "warning", "No Available Rooms :)")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+
 }
 
 type jsonResponse struct {

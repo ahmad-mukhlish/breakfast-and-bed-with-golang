@@ -17,10 +17,10 @@ func (m *postgresDBRepository) InsertReservation(reservation model.Reservation) 
 
 	var newId int
 
-	query := `INSERT 
-			into 
-    		reservations (first_name, last_name, email, phone, 
-                 start_date, end_date, room_id, created_at, updated_at) 
+	query := `INSERT
+			into
+    		reservations (first_name, last_name, email, phone,
+                 start_date, end_date, room_id, created_at, updated_at)
 			values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id`
 
 	rowContext := m.DB.QueryRowContext(ctx, query, reservation.FirstName,
@@ -44,10 +44,10 @@ func (m *postgresDBRepository) InsertRoomRestriction(roomRestriction model.RoomR
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
 	defer cancel()
 
-	query := `INSERT 
-			into 
+	query := `INSERT
+			into
     		room_restrictions (
-                 start_date, end_date, room_id, reservation_id, restriction_id, created_at, updated_at) 
+                 start_date, end_date, room_id, reservation_id, restriction_id, created_at, updated_at)
 			values ($1, $2, $3, $4, $5, $6, $7)`
 
 	_, err := m.DB.ExecContext(ctx, query, roomRestriction.StartDate,
@@ -96,11 +96,11 @@ func (m *postgresDBRepository) CheckAvailabilityForRoomById(startDate, endDate s
 	//db 			:   5 6 7 8
 	//params        :           9 10 (end date db [8] < start date params [9])
 
-	query := `select 
+	query := `select
 			  count(id)
 			  from room_restrictions
-			  where     
-			  end_date >= $1 and $2 >= start_date 
+			  where
+			  end_date >= $1 and $2 >= start_date
 			  and room_id = $3; `
 
 	rowContext := m.DB.QueryRowContext(ctx, query, startDate, endDate, roomId)
@@ -127,10 +127,10 @@ func (m *postgresDBRepository) GetAvailableRooms(startDate, endDate string) ([]m
 	query := `	select r.id, r.room_name
 				from rooms r
 				where r.id not in (
-					select 
+					select
 					rr.room_id
 					from room_restrictions rr
-					where 
+					where
 					end_date >= $1 and $2 > start_date
 				);`
 

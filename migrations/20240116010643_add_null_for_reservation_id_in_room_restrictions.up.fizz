@@ -1,1 +1,1 @@
-change_column("room_restrictions", "reservation_id", "integer", {"null":false})
+change_column("room_restrictions", "reservation_id", "integer", {"null":true})
