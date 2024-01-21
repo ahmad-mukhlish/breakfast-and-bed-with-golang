@@ -28,9 +28,8 @@ func CatchServerError(w http.ResponseWriter, err error) {
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-func ConvertStringSQLToTime(timeString string) (time.Time, error) {
+func ConvertStringSQLToTime(timeString, dateFormat string) (time.Time, error) {
 
-	dateFormat := "2006-01-02"
 	timeResult, err := time.Parse(dateFormat, timeString)
 	if err != nil {
 		return time.Now(), err

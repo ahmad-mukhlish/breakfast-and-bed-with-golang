@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository"
+	"github.com/go-chi/chi/v5"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/form"
@@ -116,13 +116,13 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 	sd := r.Form.Get("start_date")
 	ed := r.Form.Get("end_date")
 
-	startDate, err := helper.ConvertStringSQLToTime(sd)
+	startDate, err := helper.ConvertStringSQLToTime(sd, "2006-01-02")
 	if err != nil {
 		helper.CatchServerError(w, err)
 		return
 	}
 
-	endDate, err := helper.ConvertStringSQLToTime(ed)
+	endDate, err := helper.ConvertStringSQLToTime(ed, "2006-01-02")
 	if err != nil {
 		helper.CatchServerError(w, err)
 		return
@@ -243,23 +243,13 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 
 	if len(rooms) > 0 {
 
-		data := make(map[string]interface{})
-
-		data["rooms"] = rooms
-
-		templateWithRoomData := &model.TemplateData{
-			Data: data,
-		}
-
-		err := renders.ServeTemplate(w, r, "available-rooms.page.tmpl", templateWithRoomData)
-
-		startDate, err := helper.ConvertStringSQLToTime(arrival)
+		startDate, err := helper.ConvertStringSQLToTime(arrival, "01/02/2006")
 		if err != nil {
 			helper.CatchServerError(w, err)
 			return
 		}
 
-		endDate, err := helper.ConvertStringSQLToTime(departure)
+		endDate, err := helper.ConvertStringSQLToTime(departure, "01/02/2006")
 		if err != nil {
 			helper.CatchServerError(w, err)
 			return
@@ -269,6 +259,16 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 
 		m.AppConfig.Session.Put(r.Context(), "reservation",
 			reservationWithDates)
+
+		data := make(map[string]interface{})
+
+		data["rooms"] = rooms
+
+		templateWithRoomData := &model.TemplateData{
+			Data: data,
+		}
+
+		err = renders.ServeTemplate(w, r, "available-rooms.page.tmpl", templateWithRoomData)
 
 		if err != nil {
 			helper.CatchServerError(w, err)
@@ -307,6 +307,34 @@ func (m *HandlerRepository) CheckAvailabilityJSON(w http.ResponseWriter, r *http
 		helper.CatchServerError(w, err)
 		return
 	}
+}
+
+func (m *HandlerRepository) CheckRoom(w http.ResponseWriter, r *http.Request) {
+
+	idFromParam := chi.URLParam(r, "id")
+
+	roomId, err := strconv.Atoi(idFromParam)
+
+	if err != nil {
+
+		helper.CatchServerError(w, err)
+		return
+
+	}
+
+	reservation, ok := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
+
+	if !ok {
+		helper.CatchServerError(w, err)
+		return
+	}
+
+	reservation.RoomId = roomId
+
+	m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
+
+	http.Redirect(w, r, "/reservation", http.StatusSeeOther)
+
 }
 
 func initiateTemplate() *model.TemplateData {

@@ -4,12 +4,25 @@
 <div class="mx-auto mt-5 p-5">
     <h1> Available Rooms </h1>
 
-    {{$rooms := index .Data "rooms"}}
-    {{range $rooms}}
+    <ul>
 
-    {{.RoomName}} <br>
+        {{$rooms := index .Data "rooms"}}
+        {{range $rooms}}
 
-    {{end}}
+        <li>
+
+            <a href="/check/room/{{.Id}}">
+                {{.RoomName}} <br>
+            </a>
+
+
+        </li>
+
+
+        {{end}}
+
+
+    </ul>
 
 </div>
 
