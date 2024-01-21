@@ -3,13 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/form"
@@ -115,14 +116,13 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 	sd := r.Form.Get("start_date")
 	ed := r.Form.Get("end_date")
 
-	dateFormat := "2006-01-02"
-	startDate, err := time.Parse(dateFormat, sd)
+	startDate, err := helper.ConvertStringSQLToTime(sd)
 	if err != nil {
 		helper.CatchServerError(w, err)
 		return
 	}
 
-	endDate, err := time.Parse(dateFormat, ed)
+	endDate, err := helper.ConvertStringSQLToTime(ed)
 	if err != nil {
 		helper.CatchServerError(w, err)
 		return
@@ -242,6 +242,38 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 	}
 
 	if len(rooms) > 0 {
+
+		data := make(map[string]interface{})
+
+		data["rooms"] = rooms
+
+		templateWithRoomData := &model.TemplateData{
+			Data: data,
+		}
+
+		err := renders.ServeTemplate(w, r, "available-rooms.page.tmpl", templateWithRoomData)
+
+		startDate, err := helper.ConvertStringSQLToTime(arrival)
+		if err != nil {
+			helper.CatchServerError(w, err)
+			return
+		}
+
+		endDate, err := helper.ConvertStringSQLToTime(departure)
+		if err != nil {
+			helper.CatchServerError(w, err)
+			return
+		}
+
+		reservationWithDates := &model.Reservation{StartDate: startDate, EndDate: endDate}
+
+		m.AppConfig.Session.Put(r.Context(), "reservation",
+			reservationWithDates)
+
+		if err != nil {
+			helper.CatchServerError(w, err)
+			return
+		}
 
 	} else {
 		m.AppConfig.Session.Put(r.Context(), "warning", "No Available Rooms :)")
