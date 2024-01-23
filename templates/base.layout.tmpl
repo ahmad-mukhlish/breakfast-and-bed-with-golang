@@ -19,6 +19,21 @@
 
         <script src="https://kit.fontawesome.com/4ae4c0d5b9.js" crossorigin="anonymous"></script>
 
+        <style>
+
+            .table-striped>tbody>tr:nth-child(odd)>td,
+            .table-striped>tbody>tr:nth-child(odd)>th {
+                color : #28420B;
+                background-color: #AED285; // Choose your own color here
+            }
+
+            .table-striped>tbody>tr:nth-child(even)>td,
+            .table-striped>tbody>tr:nth-child(even)>th {
+                color : #28420B;
+                background-color: #FFF; // Choose your own color here
+            }
+
+        </style>
         {{block "css" .}} {{end}}
 
 

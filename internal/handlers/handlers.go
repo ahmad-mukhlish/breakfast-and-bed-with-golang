@@ -40,9 +40,6 @@ func CreateHandlers(repository *HandlerRepository) {
 
 func (m *HandlerRepository) About(w http.ResponseWriter, r *http.Request) {
 
-	var check = m.DBRepository.GetUsers()
-	fmt.Print(check)
-
 	initializedTemplate := initiateTemplate()
 	err := renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
 	if err != nil {
@@ -95,8 +92,29 @@ func (m *HandlerRepository) Home(w http.ResponseWriter, r *http.Request) {
 
 func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) {
 
-	initializedTemplate := initiateTemplate()
-	err := renders.ServeTemplate(w, r, "reservation.page.tmpl", initializedTemplate)
+	reservation := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
+	data := make(map[string]interface{})
+	data["reservation"] = reservation
+
+	room, err := m.DBRepository.GetRoomById(reservation.RoomId)
+	data["room_name"] = room.RoomName
+	data["arrival"] = reservation.StartDate.Format("Monday, 02 January 2006")
+	data["departure"] = reservation.EndDate.Format("Monday, 02 January 2006")
+
+	log.Println(reservation.Room.RoomName)
+	log.Println(reservation.Room.Id)
+
+	templateData := model.TemplateData{
+		FormValidator: form.NewValidator(nil),
+		Data:          data,
+	}
+
+	if err != nil {
+		helper.CatchServerError(w, err)
+		return
+	}
+
+	err = renders.ServeTemplate(w, r, "reservation.page.tmpl", &templateData)
 	if err != nil {
 		helper.CatchServerError(w, err)
 		return

@@ -6,10 +6,6 @@ import (
 	"time"
 )
 
-func (m *postgresDBRepository) GetUsers() bool {
-	return true
-}
-
 func (m *postgresDBRepository) InsertReservation(reservation model.Reservation) (int, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
@@ -160,4 +156,38 @@ func (m *postgresDBRepository) GetAvailableRooms(startDate, endDate string) ([]m
 	}
 
 	return rooms, nil
+}
+
+func (m *postgresDBRepository) GetRoomById(id int) (model.Room, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*300)
+	defer cancel()
+
+	query := `select r.id, r.room_name
+				from rooms r
+				where r.id = $1 ;`
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+
+	var room model.Room
+
+	if err != nil {
+		return room, err
+	}
+
+	//next is move the pointer for scan to next row
+	for rows.Next() {
+
+		err = rows.Scan(&room.Id, &room.RoomName)
+		if err != nil {
+			return room, err
+		}
+
+	}
+
+	if err = rows.Err(); err != nil {
+		return room, err
+	}
+
+	return room, nil
 }

@@ -2,107 +2,104 @@
 
 {{define "content"}}
 
-    <div class="mx-auto mt-5 p-5 col-6">
-        <h1> Please Input Your Data</h1>
 
-        <form action="/reservation" class="mt-3 needs-validation" method="POST" novalidate>
 
-            {{$reservation := index .Data "reservation"}}
+<div class="mx-auto mt-5 p-5 col-6">
 
-            <input autocomplete="false" name="csrf_token" type="hidden" value="{{index .StringMap "csrf_token"}}">
-            <div class="col">
+    {{$reservation := index .Data "reservation"}}
+    {{$roomName := index .Data "room_name"}}
 
-                <div class="mb-3">
-                    <label for="first_name" class="form-label">First Name</label>
-                    <input required autocomplete="off" type="text"
-                           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "first_name"}} is-invalid {{end}}"
-                           id="first_name" name="first_name" value="{{$reservation.FirstName}}"
-                           aria-describedby="firstName">
-                    <div class="invalid-feedback">
-                        {{with .FormValidator.FormError.GetFirstErrorMessage "first_name"}} {{.}} {{end}}
-                    </div>
+    <h1> Reservation Details</h1>
+    <p class="text-muted">
+        Room {{$roomName}} is Available, Please Fill Out The Rest of Your Data
+    </p>
+
+    <table class="table table-striped">
+
+        <tbody>
+            <tr>
+                <td>Room Name</td>
+                <td>{{$roomName}}</td>
+
+            </tr>
+            <tr>
+                <td>Arrival</td>
+                <td> {{index .Data "arrival"}}</td>
+            </tr>
+            <tr>
+                <td>Departure</td>
+                <td> {{index .Data "departure"}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <form action="/reservation" class="mt-3 needs-validation" method="POST" novalidate>
+
+
+        <input autocomplete="false" name="csrf_token" type="hidden" value="{{index .StringMap " csrf_token"}}">
+        <div class="col">
+
+            <div class="mb-3">
+                <label for="first_name" class="form-label">First Name</label>
+                <input required autocomplete="off" type="text"
+                    class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage " first_name"}} is-invalid
+                    {{end}}" id="first_name" name="first_name" value="{{$reservation.FirstName}}"
+                    aria-describedby="firstName">
+                <div class="invalid-feedback">
+                    {{with .FormValidator.FormError.GetFirstErrorMessage "first_name"}} {{.}} {{end}}
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+
+            <div class="mb-3">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input required autocomplete="off" type="text"
+                    class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage " last_name"}} is-invalid
+                    {{end}}" id="last_name" name="last_name" aria-describedby="lastName"
+                    value="{{$reservation.LastName}}">
+                <div class="invalid-feedback">
+                    {{with .FormValidator.FormError.GetFirstErrorMessage "last_name"}} {{.}} {{end}}
+                </div>
+            </div>
+        </div>
+
+
+        <input autocomplete="false" name="room_id" type="hidden" value="1">
+
+
+        <div class="col">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input required autocomplete="off" type="email"
+                    class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage " email"}} is-invalid
+                    {{end}}" id="email" name="email" aria-describedby="email" value="{{$reservation.Email}}">
+                <div class="invalid-feedback">
+                    {{with .FormValidator.FormError.GetFirstErrorMessage "email"}} {{.}} {{end}}
                 </div>
             </div>
 
-            <div class="col">
+        </div>
 
-                <div class="mb-3">
-                    <label for="last_name" class="form-label">Last Name</label>
-                    <input required autocomplete="off" type="text"
-                           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "last_name"}} is-invalid {{end}}"
-                           id="last_name" name="last_name"
-                           aria-describedby="lastName" value="{{$reservation.LastName}}">
-                    <div class="invalid-feedback">
-                        {{with .FormValidator.FormError.GetFirstErrorMessage "last_name"}} {{.}} {{end}}
-                    </div>
+        <div class="col">
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input required type="text" autocomplete="off"
+                    class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage " phone"}} is-invalid
+                    {{end}}" id="phone" name="phone" aria-describedby="phone" value="{{$reservation.Phone}}">
+                <div class="invalid-feedback">
+                    {{with .FormValidator.FormError.GetFirstErrorMessage "phone"}} {{.}} {{end}}
                 </div>
             </div>
 
-            <div class="col">
+        </div>
 
-                <div class="mb-3">
-                    <label for="start_date" class="form-label">Start Date</label>
-                    <input required autocomplete="off" type="text"
-                           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "start_date"}} is-invalid {{end}}"
-                           id="start_date" name="start_date"
-                           aria-describedby="startDate" value="{{$reservation.StartDate}}">
-                    <div class="invalid-feedback">
-                        {{with .FormValidator.FormError.GetFirstErrorMessage "start_date"}} {{.}} {{end}}
-                    </div>
-                </div>
-            </div>
+        <button type="submit" class="btn btn-primary mt-3">Input data</button>
 
-            <div class="col">
+    </form>
 
-                <div class="mb-3">
-                    <label for="end_date" class="form-label">End date</label>
-                    <input required autocomplete="off" type="text"
-                           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "end_date"}} is-invalid {{end}}"
-                           id="end_date" name="end_date"
-                           aria-describedby="endDate" value="{{$reservation.EndDate}}">
-                    <div class="invalid-feedback">
-                        {{with .FormValidator.FormError.GetFirstErrorMessage "end_date"}} {{.}} {{end}}
-                    </div>
-                </div>
-            </div>
-
-            <input autocomplete="false" name="room_id" type="hidden" value="1">
-
-
-
-            <div class="col">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input required autocomplete="off" type="email"
-                           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "email"}} is-invalid {{end}}"
-                           id="email" name="email"
-                           aria-describedby="email" value="{{$reservation.Email}}">
-                    <div class="invalid-feedback">
-                        {{with .FormValidator.FormError.GetFirstErrorMessage "email"}} {{.}} {{end}}
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="col">
-
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input required type="text" autocomplete="off"
-                           class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "phone"}} is-invalid {{end}}"
-                           id="phone" name="phone"
-                           aria-describedby="phone" value="{{$reservation.Phone}}">
-                    <div class="invalid-feedback">
-                        {{with .FormValidator.FormError.GetFirstErrorMessage "phone"}} {{.}} {{end}}
-                    </div>
-                </div>
-
-            </div>
-
-            <button type="submit" class="btn btn-primary mt-3">Input data</button>
-
-        </form>
-
-    </div>
+</div>
 
 {{end}}

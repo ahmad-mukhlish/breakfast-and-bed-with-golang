@@ -21,10 +21,11 @@ var AppConfig *config.AppConfig
 
 func main() {
 	db, err := setupServer()
-	defer db.DbPool.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.DbPool.Close()
+
 	log.Println("connected to dbrepo")
 	_, err = startServer(":8080")
 
