@@ -2,8 +2,9 @@ package dbrepo
 
 import (
 	"context"
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"time"
+
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 )
 
 func (m *postgresDBRepository) InsertReservation(reservation model.Reservation) (int, error) {
@@ -127,7 +128,7 @@ func (m *postgresDBRepository) GetAvailableRooms(startDate, endDate string) ([]m
 					rr.room_id
 					from room_restrictions rr
 					where
-					end_date >= $1 and $2 > start_date
+					end_date >= $1 and $2 >= start_date
 				);`
 
 	rows, err := m.DB.QueryContext(ctx, query, startDate, endDate)
