@@ -101,9 +101,6 @@ func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) 
 	data["arrival"] = reservation.StartDate.Format("Monday, 02 January 2006")
 	data["departure"] = reservation.EndDate.Format("Monday, 02 January 2006")
 
-	log.Println(reservation.Room.RoomName)
-	log.Println(reservation.Room.Id)
-
 	templateData := model.TemplateData{
 		FormValidator: form.NewValidator(nil),
 		Data:          data,
