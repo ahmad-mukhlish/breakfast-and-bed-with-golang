@@ -2,17 +2,23 @@
 
 {{define "content"}}
 
-    {{$reservation := index .Data "reservation"}}
+{{$reservation := index .Data "reservation"}}
 
-    <div class="mx-auto mt-5 p-5">
-        <h1> This is the about page </h1>
-    </div>
+<div class="mx-auto mt-5 p-5">
+    <h1> Reservation Summary </h1>
+</div>
 
-    <div class="px-5">
-        <table class="table table-striped">
-            <thead>
-            </thead>
-            <tbody>
+<div class="px-5">
+    <table class="table table-striped">
+        <thead>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td>Room Name</td>
+                <td>{{$reservation.Room.RoomName}}</td>
+            </tr>
+
             <tr>
                 <td>Name</td>
                 <td>{{$reservation.FirstName}} {{$reservation.LastName}}</td>
@@ -27,17 +33,16 @@
             </tr>
 
             <tr>
-                <td>Arrival Date</td>
-                <td>-</td>
+                <td>Arrival</td>
+                <td> {{index .Data "arrival"}}</td>
             </tr>
-
             <tr>
-                <td>Departure Date</td>
-                <td>-</td>
+                <td>Departure</td>
+                <td> {{index .Data "departure"}}</td>
             </tr>
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
+</div>
 
 
 

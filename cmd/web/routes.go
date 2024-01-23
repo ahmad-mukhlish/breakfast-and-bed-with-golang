@@ -22,6 +22,7 @@ func HandleRoute() http.Handler {
 	router.Get("/major", handlers.Repo.Major)
 	router.Get("/general", handlers.Repo.General)
 	router.Get("/contact", handlers.Repo.Contact)
+
 	router.Get("/reservation", handlers.Repo.Reservation)
 	router.Post("/reservation", handlers.Repo.PostReservation)
 	router.Get("/reservation-summary", handlers.Repo.ReservationSummary)

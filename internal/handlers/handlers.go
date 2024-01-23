@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -113,6 +114,9 @@ func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	reservation.Room.RoomName = room.RoomName
+	m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
+
 	err = renders.ServeTemplate(w, r, "reservation.page.tmpl", &templateData)
 	if err != nil {
 		helper.CatchServerError(w, err)
@@ -123,6 +127,13 @@ func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) 
 
 func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
+	reservation, ok := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
+
+	if !ok {
+		helper.CatchServerError(w, errors.New("cannot get reservation from session"))
+		return
+	}
+
 	err := r.ParseForm()
 
 	if err != nil {
@@ -130,35 +141,10 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	sd := r.Form.Get("start_date")
-	ed := r.Form.Get("end_date")
-
-	startDate, err := helper.ConvertStringSQLToTime(sd, "2006-01-02")
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
-
-	endDate, err := helper.ConvertStringSQLToTime(ed, "2006-01-02")
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
-	roomId, err := strconv.Atoi(r.Form.Get("room_id"))
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
-
-	reservation := model.Reservation{
-		FirstName: r.Form.Get("first_name"),
-		LastName:  r.Form.Get("last_name"),
-		Email:     r.Form.Get("email"),
-		Phone:     r.Form.Get("phone"),
-		StartDate: startDate,
-		EndDate:   endDate,
-		RoomId:    roomId,
-	}
+	reservation.FirstName = r.Form.Get("first_name")
+	reservation.LastName = r.Form.Get("last_name")
+	reservation.Email = r.Form.Get("email")
+	reservation.Phone = r.Form.Get("phone")
 
 	formValidator := form.NewValidator(r.PostForm)
 
@@ -191,9 +177,9 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 		}
 
 		roomRestriction := model.RoomRestriction{
-			StartDate:     startDate,
-			EndDate:       endDate,
-			RoomId:        roomId,
+			StartDate:     reservation.StartDate,
+			EndDate:       reservation.EndDate,
+			RoomId:        reservation.RoomId,
 			ReservationId: reservationId,
 			RestrictionId: 1,
 		}
@@ -225,6 +211,8 @@ func (m *HandlerRepository) ReservationSummary(w http.ResponseWriter, r *http.Re
 	data := make(map[string]interface{})
 
 	data["reservation"] = reservation
+	data["arrival"] = reservation.StartDate.Format("Monday, 02 January 2006")
+	data["departure"] = reservation.EndDate.Format("Monday, 02 January 2006")
 
 	err := renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", &model.TemplateData{
 		Data: data,
