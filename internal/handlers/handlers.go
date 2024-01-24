@@ -316,6 +316,22 @@ func (m *HandlerRepository) CheckAvailabilityJSON(w http.ResponseWriter, r *http
 	var message string
 	if isAvail {
 		message = "The room is available"
+		startDate, err := helper.ConvertStringSQLToTime(arrival, "01/02/2006")
+		if err != nil {
+			helper.CatchServerError(w, err)
+			return
+		}
+
+		endDate, err := helper.ConvertStringSQLToTime(departure, "01/02/2006")
+		if err != nil {
+			helper.CatchServerError(w, err)
+			return
+		}
+
+		reservationWithDates := &model.Reservation{StartDate: startDate, EndDate: endDate}
+		m.AppConfig.Session.Put(r.Context(), "reservation",
+			reservationWithDates)
+
 	} else {
 		message = "Sorry, the room is not available"
 	}

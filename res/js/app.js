@@ -197,7 +197,7 @@ function showAvailabilityForRoomsById(roomId) {
                 .then(jsonData => Swal.fire({
                     title: jsonData.message,
                 }).then((result) => {
-                    window.open("https://www.youraddress.com", "_self")
+                    window.open("/check/room/"+roomId, "_self")
                 }));
         });
     });
