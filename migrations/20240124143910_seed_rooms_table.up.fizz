@@ -1,0 +1,4 @@
+sql("INSERT INTO public.rooms (room_name,created_at,updated_at) VALUES
+	 ('Generals Quarter','2024-01-09 00:00:00.000','2024-01-09 00:00:00.000'),
+	 ('Majors Suite','2024-01-16 00:00:00.000','2024-01-16 00:00:00.000');
+")
