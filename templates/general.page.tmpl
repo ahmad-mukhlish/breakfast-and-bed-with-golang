@@ -29,7 +29,7 @@
             enim
             voluptatum dignissimos!</p>
         <button type="button" name="" id="check" class="btn btn-primary">Check availability</button>
-        <input hidden id="token" value="{{index .StringMap "csrf_token"}}">
+        <input hidden id="token" value="{{index .StringMap " csrf_token"}}">
     </div>
 </div>
 
@@ -39,29 +39,7 @@
 
 <script>
 
-    let attention = prompt();
-
-    let button = document.getElementById("check");
-
-    button.addEventListener("click", function () {
-        attention.inputDates(_ => {
-
-            let form = document.getElementById("pickerInsidePopup");
-            let formData = new FormData(form)
-            let tokenElem = document.getElementById("token")
-            formData.append("csrf_token", tokenElem.value)
-            formData.append("room_id", "1")
-
-            fetch('/check-availability/json', {
-                method: "POST",
-                body: formData,
-            })
-                .then(response => response.json())
-                .then(jsonData => Swal.fire({
-                    title: jsonData.message,
-                }))
-        });
-    });
+    showAvailabilityForRoomsById(1);
 
 </script>
 {{end}}

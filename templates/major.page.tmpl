@@ -40,31 +40,9 @@
 
 {{define "js"}}
 
-    <script>
+<script>
 
-        let attention = prompt();
+    showAvailabilityForRoomsById(2);
 
-        let button = document.getElementById("check");
-
-        button.addEventListener("click", function () {
-            attention.inputDates(_ => {
-
-                let form = document.getElementById("pickerInsidePopup");
-                let formData = new FormData(form)
-                let tokenElem = document.getElementById("token")
-                formData.append("csrf_token", tokenElem.value)
-                formData.append("room_id", "2")
-
-                fetch('/check-availability/json', {
-                    method: "POST",
-                    body: formData,
-                })
-                    .then(response => response.json())
-                    .then(jsonData => Swal.fire({
-                        title: jsonData.message,
-                    }))
-            });
-        });
-
-    </script>
+</script>
 {{end}}
