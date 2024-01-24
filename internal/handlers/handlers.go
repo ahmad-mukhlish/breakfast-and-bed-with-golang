@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -296,10 +295,34 @@ func (m *HandlerRepository) CheckAvailabilityJSON(w http.ResponseWriter, r *http
 
 	arrival := r.Form.Get("start")
 	departure := r.Form.Get("end")
-	message := fmt.Sprintf("Your arrival date is %s, your departure date is %s", arrival, departure)
+	roomIdParam := r.Form.Get("room_id")
 
-	response := jsonResponse{Ok: true, Message: message}
-	output, err := json.MarshalIndent(response, "", "  ")
+	roomId, err := strconv.Atoi(roomIdParam)
+
+	if err != nil {
+		helper.CatchServerError(w, err)
+		return
+	}
+
+	var isAvail bool
+
+	isAvail, err = m.DBRepository.CheckAvailabilityForRoomById(arrival, departure, roomId)
+
+	if err != nil {
+		helper.CatchServerError(w, err)
+		return
+	}
+
+	var message string
+	if isAvail {
+		message = "The room is available"
+	} else {
+		message = "Sorry, the room is not available"
+	}
+
+	var output []byte
+	response := jsonResponse{Ok: isAvail, Message: message}
+	output, err = json.MarshalIndent(response, "", "  ")
 
 	if err != nil {
 		helper.CatchServerError(w, err)

@@ -53,6 +53,7 @@
                 let formData = new FormData(form)
                 let tokenElem = document.getElementById("token")
                 formData.append("csrf_token", tokenElem.value)
+                formData.append("room_id", "2")
 
                 fetch('/check-availability/json', {
                     method: "POST",
