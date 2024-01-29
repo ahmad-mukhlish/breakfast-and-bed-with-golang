@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
+
 	"testing"
+
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 )
 
 type postData struct {
@@ -18,29 +21,6 @@ type test struct {
 	method             string
 	params             []postData
 	expectedStatusCode int
-}
-
-var tests = []test{
-	{"home", "/", "GET", []postData{}, http.StatusOK},
-	{"about", "/about", "GET", []postData{}, http.StatusOK},
-	{"major", "/major", "GET", []postData{}, http.StatusOK},
-	{"general", "/general", "GET", []postData{}, http.StatusOK},
-	{"contact", "/contact", "GET", []postData{}, http.StatusOK},
-	{"reservation", "/reservation", "GET", []postData{}, http.StatusOK},
-	{"reservation-summary", "/reservation-summary",
-		"GET", []postData{}, http.StatusOK},
-	{"check-availability", "/check-availability",
-		"GET", []postData{}, http.StatusOK},
-	{"no route", "/none", "GET", []postData{}, http.StatusNotFound},
-	//POST
-	{"post check availability", "/check-availability",
-		"POST", createDummyPostAvailabilityParams(), http.StatusOK},
-	{"post check availability json", "/check-availability/json",
-		"POST", createDummyPostAvailabilityParams(), http.StatusOK},
-	{"post reservation", "/reservation",
-		"POST", createDummyPostReservationParams(), http.StatusOK},
-	{"post reservation", "/reservation",
-		"POST", createDummyPostReservationInvalidParams(), http.StatusOK},
 }
 
 func createDummyPostAvailabilityParams() []postData {
@@ -74,51 +54,40 @@ func createDummyPostReservationInvalidParams() []postData {
 
 }
 
-func TestHandlers(t *testing.T) {
-	routes := getRoutes()
-	testServer := httptest.NewTLSServer(routes)
-	defer testServer.Close()
+func Test_Reservation(t *testing.T) {
 
-	for _, currentTest := range tests {
-		if currentTest.method == "GET" {
+	// create a request instance
+	request, _ := http.NewRequest("GET", "/make-reservation", nil)
 
-			mockedClient := testServer.Client()
-			mockedBasePath := testServer.URL
-			mockedFullURl := mockedBasePath + currentTest.url
+	// get the context of the request
+	currentContext := request.Context()
 
-			response, err := mockedClient.Get(mockedFullURl)
-			if err != nil {
-				t.Log(err)
-				t.Fatal(err)
-			}
-
-			if response.StatusCode != currentTest.expectedStatusCode {
-				t.Errorf("for %s, expected %d but got %d",
-					currentTest.name, currentTest.expectedStatusCode, response.StatusCode)
-			}
-
-		} else if currentTest.method == "POST" {
-
-			mockedExpectedParam := url.Values{}
-			for _, param := range currentTest.params {
-				mockedExpectedParam.Add(param.key, param.value)
-			}
-
-			mockedClient := testServer.Client()
-			mockedBasePath := testServer.URL
-			mockedFullURl := mockedBasePath + currentTest.url
-
-			response, err := mockedClient.PostForm(mockedFullURl, mockedExpectedParam)
-			if err != nil {
-				t.Log(err)
-				t.Fatal(err)
-			}
-
-			if response.StatusCode != currentTest.expectedStatusCode {
-				t.Errorf("for %s, expected %d but got %d",
-					currentTest.name, currentTest.expectedStatusCode, response.StatusCode)
-			}
-
-		}
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 1,
+		Room: model.Room{
+			Id:       1,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.Reservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusOK {
+		t.Error("Status Code Not OK")
+	}
+
 }

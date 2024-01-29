@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"encoding/gob"
+	"log"
 	"net/http"
+	"os"
+	"testing"
 	"time"
 
 	appConfig "github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
@@ -17,12 +20,16 @@ import (
 
 var AppConfig *appConfig.AppConfig
 
-func getRoutes() http.Handler {
-
+func TestMain(m *testing.M) {
 	err := setupServer()
 	if err != nil {
-		return nil
+		log.Fatal("Error")
 	}
+
+	os.Exit(m.Run())
+}
+
+func getRoutes() http.Handler {
 
 	return HandleRoute()
 
@@ -71,6 +78,11 @@ func setupSession() {
 
 	//register custom types here with gob.register
 	gob.Register(model.Reservation{})
+	gob.Register(model.TemplateData{})
+	gob.Register(model.Room{})
+	gob.Register(model.Restriction{})
+	gob.Register(model.User{})
+	gob.Register(model.RoomRestriction{})
 
 	AppConfig.Session = session
 }
