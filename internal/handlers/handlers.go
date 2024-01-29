@@ -92,11 +92,23 @@ func (m *HandlerRepository) Home(w http.ResponseWriter, r *http.Request) {
 
 func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) {
 
-	reservation := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
+	reservation, ok := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
+
+	if !ok {
+		m.AppConfig.Session.Put(r.Context(), "error", "Cannot Make A Reservation Right Now")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	}
+
 	data := make(map[string]interface{})
 	data["reservation"] = reservation
 
 	room, err := m.DBRepository.GetRoomById(reservation.RoomId)
+
+	if err != nil {
+		m.AppConfig.Session.Put(r.Context(), "error", "Cannot Find The Room")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	}
+
 	data["room_name"] = room.RoomName
 	data["arrival"] = reservation.StartDate.Format("Monday, 02 January 2006")
 	data["departure"] = reservation.EndDate.Format("Monday, 02 January 2006")
@@ -108,19 +120,10 @@ func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) 
 		Data:          data,
 	}
 
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
-
 	reservation.Room.RoomName = room.RoomName
 	m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
 
-	err = renders.ServeTemplate(w, r, "reservation.page.tmpl", &templateData)
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	_ = renders.ServeTemplate(w, r, "reservation.page.tmpl", &templateData)
 
 }
 
