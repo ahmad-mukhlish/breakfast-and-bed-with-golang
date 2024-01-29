@@ -2,28 +2,33 @@ package helper
 
 import (
 	"encoding/gob"
+
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/handlers"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+
+	"log"
+	"net/http"
+	"os"
+	"time"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/renders"
 	"github.com/alexedwards/scs/v2"
 	"github.com/justinas/nosurf"
-	"log"
-	"net/http"
-	"os"
-	"time"
 )
 
-//func getRoutes() http.Handler {
-//
-//	err := setupServer()
-//	if err != nil {
-//		return nil
-//	}
-//
-//	return HandleRoute()
-//
-//}
+func getRoutes() http.Handler {
+
+	err := setupServer()
+	if err != nil {
+		return nil
+	}
+
+	return HandleRoute()
+
+}
 
 func setupServer() error {
 	var err error
@@ -34,7 +39,7 @@ func setupServer() error {
 	}
 
 	setupSession()
-	//setupRepository()
+	setupRepository()
 	setupLogger()
 
 	return err
@@ -72,39 +77,43 @@ func setupSession() {
 	appConfig.Session = session
 }
 
-//func setupRepository() {
-//	repo := handlers.CreateRepository(appConfig)
-//	handlers.CreateHandlers(repo)
-//}
+func setupRepository() {
+	repo := handlers.CreateRepository(appConfig)
+	handlers.CreateHandlers(repo)
+}
 
-//func HandleRoute() http.Handler {
-//
-//	router := chi.NewRouter()
-//
-//	router.Use(middleware.Recoverer)
-//	router.Use(SessionLoad)
-//
-//	router.Get("/", handlers.Repo.Home)
-//	router.Get("/about", handlers.Repo.About)
-//
-//	router.Get("/major", handlers.Repo.Major)
-//	router.Get("/general", handlers.Repo.General)
-//	router.Get("/contact", handlers.Repo.Contact)
-//	router.Get("/reservation", handlers.Repo.Reservation)
-//	router.Post("/reservation", handlers.Repo.PostReservation)
-//	router.Get("/reservation-summary", handlers.Repo.ReservationSummary)
-//
-//	router.Get("/check-availability", handlers.Repo.CheckAvailabilityForRoomById)
-//	router.Post("/check-availability", handlers.Repo.PostCheckAvailability)
-//	router.Post("/check-availability/json", handlers.Repo.CheckAvailabilityJSON)
-//
-//	rootDirectoryStaticFile := http.Dir("./res/")
-//	staticFileServer := http.FileServer(rootDirectoryStaticFile)
-//
-//	router.Handle("/res"+"*", http.StripPrefix("/res", staticFileServer))
-//
-//	return router
-//}
+func HandleRoute() http.Handler {
+
+	router := chi.NewRouter()
+
+	router.Use(NoSurf)
+	router.Use(middleware.Recoverer)
+	router.Use(SessionLoad)
+
+	router.Get("/", handlers.Repo.Home)
+	router.Get("/about", handlers.Repo.About)
+
+	router.Get("/major", handlers.Repo.Major)
+	router.Get("/general", handlers.Repo.General)
+	router.Get("/contact", handlers.Repo.Contact)
+
+	router.Get("/reservation", handlers.Repo.Reservation)
+	router.Post("/reservation", handlers.Repo.PostReservation)
+	router.Get("/reservation-summary", handlers.Repo.ReservationSummary)
+
+	router.Get("/check-availability", handlers.Repo.CheckAvailability)
+	router.Post("/check-availability", handlers.Repo.PostCheckAvailability)
+	router.Post("/check-availability/json", handlers.Repo.CheckAvailabilityJSON)
+
+	router.Get("/check/room/{id}", handlers.Repo.CheckRoom)
+
+	rootDirectoryStaticFile := http.Dir("./res/")
+	staticFileServer := http.FileServer(rootDirectoryStaticFile)
+
+	router.Handle("/res"+"*", http.StripPrefix("/res", staticFileServer))
+
+	return router
+}
 
 func CreateCookie() http.Cookie {
 	return http.Cookie{

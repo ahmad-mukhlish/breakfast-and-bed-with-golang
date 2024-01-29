@@ -15,3 +15,10 @@ func NewPostgresDBRepository(dbPool *sql.DB) repository.DatabaseRepository {
 		DB: dbPool,
 	}
 }
+
+func NewMockDBRepository(dbPool *sql.DB) repository.DatabaseRepository {
+
+	return &postgresDBRepository{
+		DB: dbPool,
+	}
+}
