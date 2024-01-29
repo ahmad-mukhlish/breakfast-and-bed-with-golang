@@ -9,6 +9,9 @@ type postgresDBRepository struct {
 	DB *sql.DB
 }
 
+type mockDBRepository struct {
+}
+
 func NewPostgresDBRepository(dbPool *sql.DB) repository.DatabaseRepository {
 
 	return &postgresDBRepository{
@@ -16,9 +19,7 @@ func NewPostgresDBRepository(dbPool *sql.DB) repository.DatabaseRepository {
 	}
 }
 
-func NewMockDBRepository(dbPool *sql.DB) repository.DatabaseRepository {
+func NewMockDBRepository() repository.DatabaseRepository {
 
-	return &postgresDBRepository{
-		DB: dbPool,
-	}
+	return &mockDBRepository{}
 }

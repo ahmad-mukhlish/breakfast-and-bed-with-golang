@@ -2,15 +2,17 @@ package handlers
 
 import (
 	"encoding/gob"
+	"net/http"
+	"time"
+
 	appConfig "github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/renders"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository/dbrepo"
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/justinas/nosurf"
-	"net/http"
-	"time"
 )
 
 var AppConfig *appConfig.AppConfig
@@ -75,7 +77,7 @@ func setupSession() {
 
 func setupRepository() {
 	//TODO @ahmad-mukhlis to be fixed
-	repo := CreateRepository(AppConfig)
+	repo := CreateRepository(AppConfig, dbrepo.NewMockDBRepository())
 	CreateHandlers(repo)
 }
 
