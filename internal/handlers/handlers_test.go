@@ -91,3 +91,67 @@ func Test_Reservation(t *testing.T) {
 	}
 
 }
+
+func Test_ReservationNoSession(t *testing.T) {
+
+	// create a request instance
+	request, _ := http.NewRequest("GET", "/make-reservation", nil)
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.Reservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Error("Status Code Must Be Temporary Redirect")
+	}
+
+}
+
+func Test_ReservationNoRoomInDB(t *testing.T) {
+
+	// create a request instance
+	request, _ := http.NewRequest("GET", "/make-reservation", nil)
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 3,
+		Room: model.Room{
+			Id:       3,
+			RoomName: "Nil",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.Reservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Error("Status Code Must Be Temporary Redirect")
+	}
+}

@@ -1,6 +1,8 @@
 package dbrepo
 
 import (
+	"errors"
+
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 )
 
@@ -30,6 +32,10 @@ func (m *mockDBRepository) GetAvailableRooms(startDate, endDate string) ([]model
 func (m *mockDBRepository) GetRoomById(id int) (model.Room, error) {
 
 	var room model.Room
+
+	if id > 2 {
+		return room, errors.New("Room Does Not Exist")
+	}
 
 	return room, nil
 }
