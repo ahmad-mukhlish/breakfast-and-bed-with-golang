@@ -3,19 +3,18 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
-	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository"
-	"github.com/go-chi/chi/v5"
-
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/config"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/form"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/helper"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/renders"
+	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository"
 )
 
 type HandlerRepository struct {
@@ -41,52 +40,35 @@ func CreateHandlers(repository *HandlerRepository) {
 func (m *HandlerRepository) About(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	err := renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
 
 }
 
 func (m *HandlerRepository) General(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	err := renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
+
 }
 
 func (m *HandlerRepository) Major(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	err := renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
+
 }
 
 func (m *HandlerRepository) Contact(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	err := renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
+
 }
 
 func (m *HandlerRepository) Home(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	err := renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
 
 }
 
@@ -159,14 +141,10 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
 
-		err = renders.ServeTemplate(w, r, "reservation.page.tmpl", &model.TemplateData{
+		renders.ServeTemplate(w, r, "reservation.page.tmpl", &model.TemplateData{
 			Data:          data,
 			FormValidator: formValidator,
 		})
-		if err != nil {
-			helper.CatchServerError(w, err)
-			return
-		}
 
 		return
 
@@ -216,24 +194,16 @@ func (m *HandlerRepository) ReservationSummary(w http.ResponseWriter, r *http.Re
 	data["arrival"] = reservation.StartDate.Format("Monday, 02 January 2006")
 	data["departure"] = reservation.EndDate.Format("Monday, 02 January 2006")
 
-	err := renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", &model.TemplateData{
+	renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", &model.TemplateData{
 		Data: data,
 	})
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
 
 }
 
 func (m *HandlerRepository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	err := renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
 
 }
 
@@ -275,12 +245,7 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 			Data: data,
 		}
 
-		err = renders.ServeTemplate(w, r, "available-rooms.page.tmpl", templateWithRoomData)
-
-		if err != nil {
-			helper.CatchServerError(w, err)
-			return
-		}
+		renders.ServeTemplate(w, r, "available-rooms.page.tmpl", templateWithRoomData)
 
 	} else {
 		m.AppConfig.Session.Put(r.Context(), "warning", "No Available Rooms :)")
