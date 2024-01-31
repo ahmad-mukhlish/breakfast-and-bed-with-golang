@@ -40,37 +40,6 @@ var tests = []test{
 
 }
 
-func createDummyPostAvailabilityParams() []postData {
-
-	return []postData{
-		{"start", "2022-12-11"},
-		{"end", "2022-12-12"},
-	}
-
-}
-
-func createDummyPostReservationParams() []postData {
-
-	return []postData{
-		{"first_name", "John"},
-		{"last_name", "Doe"},
-		{"email", "john@doe.com"},
-		{"phone", "555-555"},
-	}
-
-}
-
-func createDummyPostReservationInvalidParams() []postData {
-
-	return []postData{
-		{"first_name", ""},
-		{"last_name", "Doe"},
-		{"email", "john@doe.com"},
-		{"phone", "555-555"},
-	}
-
-}
-
 func TestHandlers(t *testing.T) {
 	routes := getRoutes()
 	testServer := httptest.NewTLSServer(routes)
@@ -511,6 +480,180 @@ func Test_PostCheckAvailability_Success(t *testing.T) {
 
 	if rr.Code != http.StatusOK {
 		t.Error("Status Code Not OK")
+	}
+
+}
+
+func Test_PostCheckAvailability_NoBodyCannotParse(t *testing.T) {
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/check-availability", nil)
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailability)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Error("Status Code Must Be Temporary Redirect")
+	}
+
+}
+
+func Test_PostCheckAvailability_AvailableRoomDBError(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("start", "02-01-2006")
+	reqBody.Add("end", "04-01-2006")
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/check-availability", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailability)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Error("Status Code Must Be Temporary Redirect")
+	}
+
+}
+
+func Test_PostCheckAvailability_NoAvailableRoom(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("start", "03-01-2006")
+	reqBody.Add("end", "04-01-2006")
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/check-availability", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailability)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Error("Status Code Must Be See Other")
+	}
+
+}
+
+func Test_PostCheckAvailability_NoStartDate(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("end", "04-01-2006")
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/check-availability", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailability)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Error("Status Code Must Be Temporary Redirect")
+	}
+
+}
+
+func Test_PostCheckAvailability_NoEndDate(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("start", "01-04-2050")
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/check-availability", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailability)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("Status Code Must Be Temporary Redirect Got %d", rr.Code)
 	}
 
 }

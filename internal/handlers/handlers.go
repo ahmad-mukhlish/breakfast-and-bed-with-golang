@@ -224,20 +224,7 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 	arrival := r.Form.Get("start")
 	departure := r.Form.Get("end")
 
-	rooms, err := m.DBRepository.GetAvailableRooms(arrival, departure)
-	if err != nil {
-		handleErrorAndRedirect(m, w, r, err.Error())
-		return
-	}
-
-	//room is not available
-	if len(rooms) <= 0 {
-		m.AppConfig.Session.Put(r.Context(), "warning", "No Available Rooms :)")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	//parse into time
+	//parse into time and check errors
 	startDate, err := helper.ConvertStringSQLToTime(arrival, "02-01-2006")
 	if err != nil {
 		handleErrorAndRedirect(m, w, r, err.Error())
@@ -247,6 +234,24 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 	endDate, err := helper.ConvertStringSQLToTime(departure, "02-01-2006")
 	if err != nil {
 		handleErrorAndRedirect(m, w, r, err.Error())
+		return
+	}
+
+	startDateSQLFormat := startDate.Format("2006-01-02")
+	endDateSQLFormat := endDate.Format("2006-01-02")
+
+	rooms, dbErr := m.DBRepository.GetAvailableRooms(
+		startDateSQLFormat, endDateSQLFormat)
+
+	if dbErr != nil {
+		handleErrorAndRedirect(m, w, r, dbErr.Error())
+		return
+	}
+
+	//room is not available
+	if len(rooms) <= 0 {
+		m.AppConfig.Session.Put(r.Context(), "warning", "No Available Rooms :)")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 

@@ -35,6 +35,16 @@ func (m *mockDBRepository) GetAvailableRooms(startDate, endDate string) ([]model
 
 	var rooms []model.Room
 
+	//case db error
+	if startDate == "2006-01-02" {
+		return rooms, errors.New("error get available Rooms")
+	}
+
+	//case empty room
+	if startDate == "2006-01-03" {
+		return rooms, nil
+	}
+
 	room := model.Room{
 		Id:        1,
 		RoomName:  "abajadun",
