@@ -270,40 +270,43 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 
 }
 
-func (m *HandlerRepository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerRepository) PostCheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
-	arrival := r.Form.Get("start")
-	departure := r.Form.Get("end")
-	roomIdParam := r.Form.Get("room_id")
-
-	roomId, err := strconv.Atoi(roomIdParam)
-
-	if err != nil {
-		helper.CatchServerError(w, err)
+	errorParse := r.ParseForm()
+	if errorParse != nil {
+		handleErrorAndRedirect(m, w, r, errorParse.Error())
 		return
 	}
 
-	var isAvail bool
+	roomIdParam := r.Form.Get("room_id")
 
-	isAvail, err = m.DBRepository.CheckAvailabilityForRoomById(arrival, departure, roomId)
+	roomId, parseErr := strconv.Atoi(roomIdParam)
+	if parseErr != nil {
+		handleErrorAndRedirect(m, w, r, parseErr.Error())
+		return
+	}
 
-	if err != nil {
-		helper.CatchServerError(w, err)
+	arrival := r.Form.Get("start")
+	departure := r.Form.Get("end")
+
+	isAvail, dbErr := m.DBRepository.CheckAvailabilityForRoomById(arrival, departure, roomId)
+	if dbErr != nil {
+		handleErrorAndRedirect(m, w, r, dbErr.Error())
 		return
 	}
 
 	var message string
 	if isAvail {
 		message = "The room is available"
-		startDate, err := helper.ConvertStringSQLToTime(arrival, "01/02/2006")
+		startDate, err := helper.ConvertStringSQLToTime(arrival, "02-01-2006")
 		if err != nil {
-			helper.CatchServerError(w, err)
+			handleErrorAndRedirect(m, w, r, err.Error())
 			return
 		}
 
-		endDate, err := helper.ConvertStringSQLToTime(departure, "01/02/2006")
+		endDate, err := helper.ConvertStringSQLToTime(departure, "02-01-2006")
 		if err != nil {
-			helper.CatchServerError(w, err)
+			handleErrorAndRedirect(m, w, r, err.Error())
 			return
 		}
 
@@ -317,19 +320,11 @@ func (m *HandlerRepository) CheckAvailabilityJSON(w http.ResponseWriter, r *http
 
 	var output []byte
 	response := jsonResponse{Ok: isAvail, Message: message}
-	output, err = json.MarshalIndent(response, "", "  ")
-
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	output, _ = json.MarshalIndent(response, "", "  ")
 
 	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(output)
-	if err != nil {
-		helper.CatchServerError(w, err)
-		return
-	}
+	_, _ = w.Write(output)
+
 }
 
 func (m *HandlerRepository) CheckRoom(w http.ResponseWriter, r *http.Request) {

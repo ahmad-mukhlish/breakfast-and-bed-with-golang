@@ -97,6 +97,7 @@ function prompt() {
                     orientation: "top auto",
                     buttonClass: "btn",
                     minDate: new Date(),
+                    format : "dd-mm-yyyy"
                 });
 
 

@@ -29,7 +29,7 @@ func HandleRoute() http.Handler {
 
 	router.Get("/check-availability", handlers.Repo.CheckAvailability)
 	router.Post("/check-availability", handlers.Repo.PostCheckAvailability)
-	router.Post("/check-availability/json", handlers.Repo.CheckAvailabilityJSON)
+	router.Post("/check-availability/json", handlers.Repo.PostCheckAvailabilityJSON)
 
 	router.Get("/check/room/{id}", handlers.Repo.CheckRoom)
 

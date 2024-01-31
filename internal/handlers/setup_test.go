@@ -112,7 +112,7 @@ func HandleRoute() http.Handler {
 
 	router.Get("/check-availability", Repo.CheckAvailability)
 	router.Post("/check-availability", Repo.PostCheckAvailability)
-	router.Post("/check-availability/json", Repo.CheckAvailabilityJSON)
+	router.Post("/check-availability/json", Repo.PostCheckAvailabilityJSON)
 
 	rootDirectoryStaticFile := http.Dir("./res/")
 	staticFileServer := http.FileServer(rootDirectoryStaticFile)
