@@ -337,23 +337,18 @@ func (m *HandlerRepository) CheckRoom(w http.ResponseWriter, r *http.Request) {
 	idFromParam := chi.URLParam(r, "id")
 
 	roomId, err := strconv.Atoi(idFromParam)
-
 	if err != nil {
-
-		helper.CatchServerError(w, err)
+		handleErrorAndRedirect(m, w, r, err.Error())
 		return
-
 	}
 
 	reservation, ok := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
-
 	if !ok {
-		helper.CatchServerError(w, err)
+		handleErrorAndRedirect(m, w, r, "Cannot get reservation from session")
 		return
 	}
 
 	reservation.RoomId = roomId
-
 	m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
 
 	http.Redirect(w, r, "/reservation", http.StatusSeeOther)
