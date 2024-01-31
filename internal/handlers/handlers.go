@@ -22,6 +22,11 @@ type HandlerRepository struct {
 	DBRepository repository.DatabaseRepository
 }
 
+type jsonResponse struct {
+	Ok      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
 var Repo *HandlerRepository
 
 func CreateRepository(appConfig *config.AppConfig, dbrepository repository.DatabaseRepository) *HandlerRepository {
@@ -40,35 +45,35 @@ func CreateHandlers(repository *HandlerRepository) {
 func (m *HandlerRepository) About(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
+	_ = renders.ServeTemplate(w, r, "about.page.tmpl", initializedTemplate)
 
 }
 
 func (m *HandlerRepository) General(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
+	_ = renders.ServeTemplate(w, r, "general.page.tmpl", initializedTemplate)
 
 }
 
 func (m *HandlerRepository) Major(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
+	_ = renders.ServeTemplate(w, r, "major.page.tmpl", initializedTemplate)
 
 }
 
 func (m *HandlerRepository) Contact(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
+	_ = renders.ServeTemplate(w, r, "contact.page.tmpl", initializedTemplate)
 
 }
 
 func (m *HandlerRepository) Home(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
+	_ = renders.ServeTemplate(w, r, "home.page.tmpl", initializedTemplate)
 
 }
 
@@ -196,7 +201,7 @@ func (m *HandlerRepository) ReservationSummary(w http.ResponseWriter, r *http.Re
 	data["arrival"] = reservation.StartDate.Format("Monday, 02 January 2006")
 	data["departure"] = reservation.EndDate.Format("Monday, 02 January 2006")
 
-	renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", &model.TemplateData{
+	_ = renders.ServeTemplate(w, r, "reservation-summary.page.tmpl", &model.TemplateData{
 		Data: data,
 	})
 
@@ -205,60 +210,59 @@ func (m *HandlerRepository) ReservationSummary(w http.ResponseWriter, r *http.Re
 func (m *HandlerRepository) CheckAvailability(w http.ResponseWriter, r *http.Request) {
 
 	initializedTemplate := initiateTemplate()
-	renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
+	_ = renders.ServeTemplate(w, r, "check-availability.page.tmpl", initializedTemplate)
 
 }
 
 func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http.Request) {
 
+	errorParse := r.ParseForm()
+	if errorParse != nil {
+		handleErrorAndRedirect(m, w, r, errorParse.Error())
+		return
+	}
 	arrival := r.Form.Get("start")
 	departure := r.Form.Get("end")
-	rooms, err := m.DBRepository.GetAvailableRooms(arrival, departure)
 
+	rooms, err := m.DBRepository.GetAvailableRooms(arrival, departure)
 	if err != nil {
-		helper.CatchServerError(w, err)
+		handleErrorAndRedirect(m, w, r, err.Error())
 		return
 	}
 
-	if len(rooms) > 0 {
-
-		startDate, err := helper.ConvertStringSQLToTime(arrival, "01/02/2006")
-		if err != nil {
-			helper.CatchServerError(w, err)
-			return
-		}
-
-		endDate, err := helper.ConvertStringSQLToTime(departure, "01/02/2006")
-		if err != nil {
-			helper.CatchServerError(w, err)
-			return
-		}
-
-		reservationWithDates := &model.Reservation{StartDate: startDate, EndDate: endDate}
-
-		m.AppConfig.Session.Put(r.Context(), "reservation",
-			reservationWithDates)
-
-		data := make(map[string]interface{})
-
-		data["rooms"] = rooms
-
-		templateWithRoomData := &model.TemplateData{
-			Data: data,
-		}
-
-		renders.ServeTemplate(w, r, "available-rooms.page.tmpl", templateWithRoomData)
-
-	} else {
+	//room is not available
+	if len(rooms) <= 0 {
 		m.AppConfig.Session.Put(r.Context(), "warning", "No Available Rooms :)")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
-}
+	//parse into time
+	startDate, err := helper.ConvertStringSQLToTime(arrival, "01/02/2006")
+	if err != nil {
+		handleErrorAndRedirect(m, w, r, err.Error())
+		return
+	}
 
-type jsonResponse struct {
-	Ok      bool   `json:"ok"`
-	Message string `json:"message"`
+	endDate, err := helper.ConvertStringSQLToTime(departure, "01/02/2006")
+	if err != nil {
+		handleErrorAndRedirect(m, w, r, err.Error())
+		return
+	}
+
+	//save to the session
+	reservationWithDates := &model.Reservation{StartDate: startDate, EndDate: endDate}
+	m.AppConfig.Session.Put(r.Context(), "reservation",
+		reservationWithDates)
+
+	//serve to template
+	data := make(map[string]interface{})
+	data["rooms"] = rooms
+	templateWithRoomData := &model.TemplateData{
+		Data: data,
+	}
+	_ = renders.ServeTemplate(w, r, "available-rooms.page.tmpl", templateWithRoomData)
+
 }
 
 func (m *HandlerRepository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
