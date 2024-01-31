@@ -217,6 +217,6 @@ func Test_ReservationNoRoomInDB(t *testing.T) {
 	mockedHandler.ServeHTTP(rr, request)
 
 	if rr.Code != http.StatusTemporaryRedirect {
-		t.Error("Status Code Must Be Temporary Redirect")
+		t.Errorf("Status Code Must Be Temporary Redirect but instead get %d", rr.Code)
 	}
 }

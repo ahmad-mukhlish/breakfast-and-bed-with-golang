@@ -77,8 +77,8 @@ func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) 
 	reservation, ok := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
 
 	if !ok {
-		m.AppConfig.Session.Put(r.Context(), "error", "Cannot Make A Reservation Right Now")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		handleErrorAndRedirect(m, w, r, "Cannot Make A Reservation Right Now")
+		return
 	}
 
 	data := make(map[string]interface{})
@@ -87,8 +87,8 @@ func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) 
 	room, err := m.DBRepository.GetRoomById(reservation.RoomId)
 
 	if err != nil {
-		m.AppConfig.Session.Put(r.Context(), "error", "Cannot Find The Room")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		handleErrorAndRedirect(m, w, r, "Cannot Find The Room")
+		return
 	}
 
 	data["room_name"] = room.RoomName
@@ -361,6 +361,13 @@ func initiateTemplate() *model.TemplateData {
 	}
 
 	return &templateData
+
+}
+
+func handleErrorAndRedirect(m *HandlerRepository, w http.ResponseWriter, r *http.Request, errorMessage string) {
+	m.AppConfig.Session.Put(r.Context(), "error", errorMessage)
+	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	helper.CatchServerError(w, errors.New(errorMessage))
 
 }
 
