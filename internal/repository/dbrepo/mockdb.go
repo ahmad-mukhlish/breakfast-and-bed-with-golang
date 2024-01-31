@@ -31,6 +31,9 @@ func (m *mockDBRepository) CheckAvailabilityForRoomById(startDate, endDate strin
 	if roomId == 1 {
 		return true, nil
 	}
+	if roomId == 1000 {
+		return true, errors.New("mocking error")
+	}
 
 	return false, nil
 }
