@@ -471,7 +471,8 @@ func Test_PostCheckAvailability_Success(t *testing.T) {
 
 	reqBody := url.Values{}
 
-	reqBody.Add("start", "")
+	reqBody.Add("start", "01-02-2024")
+	reqBody.Add("end", "10-02-2024")
 	reqBody.Add("first_name", "Ahmad")
 	reqBody.Add("last_name", "Mukhlis")
 	reqBody.Add("email", "ahmad@mukhlis.com")
@@ -508,8 +509,8 @@ func Test_PostCheckAvailability_Success(t *testing.T) {
 	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailability)
 	mockedHandler.ServeHTTP(rr, request)
 
-	if rr.Code != http.StatusSeeOther {
-		t.Error("Status Code Not See Other")
+	if rr.Code != http.StatusOK {
+		t.Error("Status Code Not OK")
 	}
 
 }
