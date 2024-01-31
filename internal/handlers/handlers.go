@@ -238,13 +238,13 @@ func (m *HandlerRepository) PostCheckAvailability(w http.ResponseWriter, r *http
 	}
 
 	//parse into time
-	startDate, err := helper.ConvertStringSQLToTime(arrival, "01/02/2006")
+	startDate, err := helper.ConvertStringSQLToTime(arrival, "02-01-2006")
 	if err != nil {
 		handleErrorAndRedirect(m, w, r, err.Error())
 		return
 	}
 
-	endDate, err := helper.ConvertStringSQLToTime(departure, "01/02/2006")
+	endDate, err := helper.ConvertStringSQLToTime(departure, "02-01-2006")
 	if err != nil {
 		handleErrorAndRedirect(m, w, r, err.Error())
 		return

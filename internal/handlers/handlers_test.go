@@ -466,3 +466,50 @@ func Test_PostReservation_CannotInsertRoomRestriction(t *testing.T) {
 	}
 
 }
+
+func Test_PostCheckAvailability_Success(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("start", "")
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/check-availability", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 1,
+		Room: model.Room{
+			Id:       1,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailability)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Error("Status Code Not See Other")
+	}
+
+}

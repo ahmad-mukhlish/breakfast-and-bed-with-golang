@@ -2,6 +2,7 @@ package dbrepo
 
 import (
 	"errors"
+	"time"
 
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/model"
 )
@@ -33,6 +34,18 @@ func (m *mockDBRepository) CheckAvailabilityForRoomById(startDate, endDate strin
 func (m *mockDBRepository) GetAvailableRooms(startDate, endDate string) ([]model.Room, error) {
 
 	var rooms []model.Room
+
+	room := model.Room{
+		Id:        1,
+		RoomName:  "abajadun",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+	rooms =
+		append(
+			rooms,
+			room,
+		)
 
 	return rooms, nil
 }
