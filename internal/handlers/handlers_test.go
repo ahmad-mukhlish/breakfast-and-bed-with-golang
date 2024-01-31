@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
@@ -780,6 +781,57 @@ func Test_CheckRoom_NoSession(t *testing.T) {
 
 	if rr.Code != http.StatusTemporaryRedirect {
 		t.Errorf("Status Code Not Temporary Redirect")
+	}
+
+}
+
+func Test_PostCheckAvailabilityJSON_Success(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("start", "01-02-2024")
+	reqBody.Add("end", "10-02-2024")
+	reqBody.Add("room_id", "1")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/check-availability/json", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 1,
+		Room: model.Room{
+			Id:       1,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailabilityJSON)
+	mockedHandler.ServeHTTP(rr, request)
+
+	var j jsonResponse
+	err = json.Unmarshal([]byte(rr.Body.String()), &j)
+	if err != nil {
+		t.Error("failed to parse json!")
+	}
+
+	if !j.Ok {
+		t.Error("Room must be avail")
 	}
 
 }

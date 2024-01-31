@@ -28,6 +28,10 @@ func (m *mockDBRepository) InsertRoomRestriction(roomRestriction model.RoomRestr
 
 func (m *mockDBRepository) CheckAvailabilityForRoomById(startDate, endDate string, roomId int) (bool, error) {
 
+	if roomId == 1 {
+		return true, nil
+	}
+
 	return false, nil
 }
 
