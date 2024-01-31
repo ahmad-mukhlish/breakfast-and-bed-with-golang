@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 
 	"testing"
 
@@ -119,7 +120,7 @@ func TestHandlers(t *testing.T) {
 	}
 }
 
-func Test_Reservation(t *testing.T) {
+func Test_Reservation_Success(t *testing.T) {
 
 	// create a request instance
 	request, _ := http.NewRequest("GET", "/reservation", nil)
@@ -157,7 +158,7 @@ func Test_Reservation(t *testing.T) {
 
 }
 
-func Test_ReservationNoSession(t *testing.T) {
+func Test_Reservation_NoSession(t *testing.T) {
 
 	// create a request instance
 	request, _ := http.NewRequest("GET", "/reservation", nil)
@@ -184,7 +185,7 @@ func Test_ReservationNoSession(t *testing.T) {
 
 }
 
-func Test_ReservationNoRoomInDB(t *testing.T) {
+func Test_Reservation_NoRoomInDB(t *testing.T) {
 
 	// create a request instance
 	request, _ := http.NewRequest("GET", "/reservation", nil)
@@ -219,4 +220,249 @@ func Test_ReservationNoRoomInDB(t *testing.T) {
 	if rr.Code != http.StatusTemporaryRedirect {
 		t.Errorf("Status Code Must Be Temporary Redirect but instead get %d", rr.Code)
 	}
+}
+
+func Test_PostReservation_Success(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/reservation", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 1,
+		Room: model.Room{
+			Id:       1,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostReservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Error("Status Code Not See Other")
+	}
+
+}
+
+func Test_PostReservation_NoSession(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/reservation", strings.NewReader(reqBody.Encode()))
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostReservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Error("Status Code Must Be Temporary Redirect")
+	}
+
+}
+
+func Test_PostReservation_NoBodyCannotParse(t *testing.T) {
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/reservation", nil)
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostReservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Error("Status Code Must Be Temporary Redirect")
+	}
+
+}
+
+func Test_PostReservation_InvalidData(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/reservation", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 1,
+		Room: model.Room{
+			Id:       1,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostReservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusOK {
+		t.Error("Status Code Not OK")
+	}
+
+}
+
+func Test_PostReservation_CannotInsertReservation(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/reservation", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 1000,
+		Room: model.Room{
+			Id:       1000,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostReservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("Status Code Not Temporary Redirect and Get %d", rr.Code)
+	}
+
+}
+
+func Test_PostReservation_CannotInsertRoomRestriction(t *testing.T) {
+
+	reqBody := url.Values{}
+
+	reqBody.Add("first_name", "Ahmad")
+	reqBody.Add("last_name", "Mukhlis")
+	reqBody.Add("email", "ahmad@mukhlis.com")
+	reqBody.Add("phone", "11111111111")
+
+	// create a request instance
+	request, _ := http.NewRequest("POST", "/reservation", strings.NewReader(reqBody.Encode()))
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 10000,
+		Room: model.Room{
+			Id:       10000,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.PostReservation)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("Status Code Not Temporary Redirect and Get %d", rr.Code)
+	}
+
 }

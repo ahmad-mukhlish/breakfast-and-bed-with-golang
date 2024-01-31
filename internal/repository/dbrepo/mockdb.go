@@ -8,11 +8,19 @@ import (
 
 func (m *mockDBRepository) InsertReservation(reservation model.Reservation) (int, error) {
 
+	if reservation.RoomId == 1000 {
+		return 0, errors.New("cannot Insert Into Reservation")
+	}
+
 	return 0, nil
 
 }
 
 func (m *mockDBRepository) InsertRoomRestriction(roomRestriction model.RoomRestriction) error {
+
+	if roomRestriction.RoomId == 10000 {
+		return errors.New("cannot Insert Into RoomRestriction")
+	}
 
 	return nil
 }

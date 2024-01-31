@@ -111,27 +111,28 @@ func (m *HandlerRepository) Reservation(w http.ResponseWriter, r *http.Request) 
 
 func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
-	reservation, ok := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
-
-	if !ok {
-		helper.CatchServerError(w, errors.New("cannot get reservation from session"))
-		return
-	}
-
+	//parse the data
 	err := r.ParseForm()
-
 	if err != nil {
-		helper.CatchServerError(w, err)
+		handleErrorAndRedirect(m, w, r, err.Error())
 		return
 	}
 
+	//get the reservation from session
+	reservation, ok := m.AppConfig.Session.Get(r.Context(), "reservation").(model.Reservation)
+	if !ok {
+		handleErrorAndRedirect(m, w, r, "Cannot get reservation from session")
+		return
+	}
+
+	//parse the data
 	reservation.FirstName = r.Form.Get("first_name")
 	reservation.LastName = r.Form.Get("last_name")
 	reservation.Email = r.Form.Get("email")
 	reservation.Phone = r.Form.Get("phone")
 
+	//form validator
 	formValidator := form.NewValidator(r.PostForm)
-
 	formValidator.ValidateLength("first_name", 3)
 	formValidator.Required("first_name", "last_name", "phone")
 	formValidator.ValidateEmail("email")
@@ -141,40 +142,41 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
 
-		renders.ServeTemplate(w, r, "reservation.page.tmpl", &model.TemplateData{
+		_ = renders.ServeTemplate(w, r, "reservation.page.tmpl", &model.TemplateData{
 			Data:          data,
 			FormValidator: formValidator,
 		})
 
 		return
 
-	} else {
-		//store the value of reservation in session
-		reservationId, dbErr := m.DBRepository.InsertReservation(reservation)
-		if dbErr != nil {
-			helper.CatchServerError(w, err)
-			return
-		}
+	}
 
-		roomRestriction := model.RoomRestriction{
-			StartDate:     reservation.StartDate,
-			EndDate:       reservation.EndDate,
-			RoomId:        reservation.RoomId,
-			ReservationId: reservationId,
-			RestrictionId: 1,
-		}
-
-		err = m.DBRepository.InsertRoomRestriction(roomRestriction)
-		if err != nil {
-			helper.CatchServerError(w, err)
-			return
-		}
-
-		m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
-
-		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+	//store the value of reservation in session
+	reservationId, dbErr := m.DBRepository.InsertReservation(reservation)
+	if dbErr != nil {
+		handleErrorAndRedirect(m, w, r, dbErr.Error())
 		return
 	}
+
+	roomRestriction := model.RoomRestriction{
+		StartDate:     reservation.StartDate,
+		EndDate:       reservation.EndDate,
+		RoomId:        reservation.RoomId,
+		ReservationId: reservationId,
+		RestrictionId: 1,
+	}
+
+	dbErr = m.DBRepository.InsertRoomRestriction(roomRestriction)
+	if dbErr != nil {
+		handleErrorAndRedirect(m, w, r, dbErr.Error())
+		return
+	}
+
+	m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
+
+	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+	return
+
 }
 
 func (m *HandlerRepository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
