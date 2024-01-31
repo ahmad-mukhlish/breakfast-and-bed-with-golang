@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"context"
+	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -654,6 +656,130 @@ func Test_PostCheckAvailability_NoEndDate(t *testing.T) {
 
 	if rr.Code != http.StatusTemporaryRedirect {
 		t.Errorf("Status Code Must Be Temporary Redirect Got %d", rr.Code)
+	}
+
+}
+
+func Test_CheckRoom_Success(t *testing.T) {
+
+	// create a request instance
+	request, _ := http.NewRequest("GET", "/check/room/{id}", nil)
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// set the RequestURI on the request so that we can grab the ID
+	// from the URL
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", "1")
+
+	request = request.WithContext(context.WithValue(request.Context(), chi.RouteCtxKey, rctx))
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 1,
+		Room: model.Room{
+			Id:       1,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.CheckRoom)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("Status Code Not See Other")
+	}
+
+}
+
+func Test_CheckRoom_NoID(t *testing.T) {
+
+	// create a request instance
+	request, _ := http.NewRequest("GET", "/check/room/{id}", nil)
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// set the RequestURI on the request so that we can grab the ID
+	// from the URL
+
+	// put the reservation into the session via sessioned context
+	reservation := model.Reservation{
+		RoomId: 1,
+		Room: model.Room{
+			Id:       1,
+			RoomName: "Generals",
+		},
+	}
+
+	AppConfig.Session.Put(sessionedContext, "reservation", reservation)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.CheckRoom)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("Status Code Not Temporary Redirect")
+	}
+
+}
+
+func Test_CheckRoom_NoSession(t *testing.T) {
+
+	// create a request instance
+	request, _ := http.NewRequest("GET", "/check/room/{id}", nil)
+
+	// get the context of the request
+	currentContext := request.Context()
+
+	//make the context session-able
+	sessionedContext, err := AppConfig.Session.Load(currentContext, request.Header.Get("X-Session"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//make the request session-able
+	request = request.WithContext(sessionedContext)
+
+	// set the RequestURI on the request so that we can grab the ID
+	// from the URL
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("id", "1")
+
+	request = request.WithContext(context.WithValue(request.Context(), chi.RouteCtxKey, rctx))
+
+	AppConfig.Session.Put(sessionedContext, "reservation", nil)
+
+	rr := httptest.NewRecorder()
+	mockedHandler := http.HandlerFunc(Repo.CheckRoom)
+	mockedHandler.ServeHTTP(rr, request)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("Status Code Not Temporary Redirect")
 	}
 
 }
