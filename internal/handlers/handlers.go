@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
@@ -178,6 +179,8 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 	}
 
 	m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
+
+	sendEmail(m, reservation.Email, "Reservation Notification", buildEmailNotificationGuest(reservation))
 
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 	return
@@ -363,6 +366,35 @@ func initiateTemplate() *model.TemplateData {
 
 	return &templateData
 
+}
+
+func sendEmail(m *HandlerRepository, emailTo, subject, emailContent string) {
+
+	mail := model.MailData{
+		To:      emailTo,
+		From:    "admin@breakfast-and-bed.com",
+		Content: emailContent,
+		Subject: subject,
+	}
+
+	m.AppConfig.MailChan <- mail
+}
+
+func buildEmailNotificationGuest(reservation model.Reservation) string {
+
+	emailTemplate := `<strong> Reservation Confirmation </strong> <br>
+                      <br> Dear %s %s, <br> <br>
+                      This is the confirmation of your reservation<br> <br> The date will be from %s to %s <br> in our breakfast and bed hotel <br><br>
+                      Your room name will be %s <br><br>
+
+                      Best regards, <br>
+                      Breakfast and Bed.
+                     
+`
+
+	return fmt.Sprintf(emailTemplate, reservation.FirstName, reservation.LastName,
+		reservation.StartDate.Format("02-01-2006"), reservation.EndDate.Format("02-01-2006"),
+		reservation.Room.RoomName)
 }
 
 func handleErrorAndRedirect(m *HandlerRepository, w http.ResponseWriter, r *http.Request, errorMessage string) {

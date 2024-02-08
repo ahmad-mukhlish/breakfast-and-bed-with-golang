@@ -29,16 +29,6 @@ func main() {
 
 	startWorkerListenMail()
 
-	//TODO @ahmad-mukhlis delete this
-	mail := model.MailData{
-		To:      "you@there.com",
-		From:    "me@here.com",
-		Content: "Hello <strong> world! </strong>",
-		Subject: "Hello world",
-	}
-
-	AppConfig.MailChan <- mail
-
 	log.Println("connected to dbrepo")
 	_, err = startServer(":8080")
 
