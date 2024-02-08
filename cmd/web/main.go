@@ -8,7 +8,6 @@ import (
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository/dbrepo"
 	"log"
 	"net/http"
-	"net/smtp"
 	"os"
 	"time"
 
@@ -26,14 +25,19 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.DbPool.Close()
+	defer close(AppConfig.MailChan)
+
+	startWorkerListenMail()
 
 	//TODO @ahmad-mukhlis delete this
-	from := "me@here.com"
-	auth := smtp.PlainAuth("", from, "", "localhost")
-	err = smtp.SendMail("localhost:1025", auth, from, []string{"you@here.com"}, []byte("From: sender@example.com\nTo: recipient@example.com\nSubject: Email Subject\n\nThis is the body of the email.\nIt can contain multiple lines of text."))
-	if err != nil {
-		log.Fatal(err)
+	mail := model.MailData{
+		To:      "you@there.com",
+		From:    "me@here.com",
+		Content: "Hello <strong> world! </strong>",
+		Subject: "Hello world",
 	}
+
+	AppConfig.MailChan <- mail
 
 	log.Println("connected to dbrepo")
 	_, err = startServer(":8080")
@@ -56,7 +60,7 @@ func setupServer() (*driver.DB, error) {
 	}
 
 	setupLogger()
-
+	AppConfig.MailChan = make(chan model.MailData)
 	return db, err
 
 }

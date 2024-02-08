@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	Id          int
@@ -53,4 +55,11 @@ type RoomRestriction struct {
 	UpdatedAt     time.Time
 	RestrictionId int
 	Restriction   Restriction
+}
+
+type MailData struct {
+	To      string
+	From    string
+	Content string
+	Subject string
 }
