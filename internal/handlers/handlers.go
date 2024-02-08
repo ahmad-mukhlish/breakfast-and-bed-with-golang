@@ -180,7 +180,11 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 
 	m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
 
+	//send email to guest
 	sendEmail(m, reservation.Email, "Reservation Notification", buildEmailNotificationGuest(reservation))
+
+	//send email to owner
+	sendEmail(m, "owner@breakfast-bed.com", "Owner's Reservation Notification", buildEmailNotificationOwner(reservation))
 
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 	return
@@ -395,6 +399,26 @@ func buildEmailNotificationGuest(reservation model.Reservation) string {
 	return fmt.Sprintf(emailTemplate, reservation.FirstName, reservation.LastName,
 		reservation.StartDate.Format("02-01-2006"), reservation.EndDate.Format("02-01-2006"),
 		reservation.Room.RoomName)
+}
+
+func buildEmailNotificationOwner(reservation model.Reservation) string {
+
+	emailTemplate := `<strong> Owner's Reservation Confirmation </strong> <br>
+                      <br> Dear Owner <br> <br>
+                      This is the confirmation of the reservation<br> <br> The date will be from %s to %s <br> in our breakfast and bed hotel <br><br>
+                      The room name will be %s <br><br>
+
+                      The name of our guest is %s %s <br>
+                      (Phone Number : %s) <br> <br>
+
+                      Best regards, <br>
+                      Breakfast and Bed Admin.
+                     
+`
+
+	return fmt.Sprintf(emailTemplate,
+		reservation.StartDate.Format("02-01-2006"), reservation.EndDate.Format("02-01-2006"),
+		reservation.Room.RoomName, reservation.FirstName, reservation.LastName, reservation.Phone)
 }
 
 func handleErrorAndRedirect(m *HandlerRepository, w http.ResponseWriter, r *http.Request, errorMessage string) {
