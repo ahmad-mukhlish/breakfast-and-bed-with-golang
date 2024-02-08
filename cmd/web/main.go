@@ -8,6 +8,7 @@ import (
 	"github.com/ahmad-mukhlish/breakfast-and-bed-with-golang/internal/repository/dbrepo"
 	"log"
 	"net/http"
+	"net/smtp"
 	"os"
 	"time"
 
@@ -25,6 +26,14 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.DbPool.Close()
+
+	//TODO @ahmad-mukhlis delete this
+	from := "me@here.com"
+	auth := smtp.PlainAuth("", from, "", "localhost")
+	err = smtp.SendMail("localhost:1025", auth, from, []string{"you@here.com"}, []byte("From: sender@example.com\nTo: recipient@example.com\nSubject: Email Subject\n\nThis is the body of the email.\nIt can contain multiple lines of text."))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	log.Println("connected to dbrepo")
 	_, err = startServer(":8080")
