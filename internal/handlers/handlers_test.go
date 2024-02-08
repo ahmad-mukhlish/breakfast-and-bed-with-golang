@@ -1089,8 +1089,8 @@ func Test_PostCheckAvailabilityJSON_NoAvailRooms(t *testing.T) {
 	mockedHandler := http.HandlerFunc(Repo.PostCheckAvailabilityJSON)
 	mockedHandler.ServeHTTP(rr, request)
 
-	if rr.Code != http.StatusTemporaryRedirect {
-		t.Errorf("Status Code Not Temporary Redirect")
+	if rr.Code != http.StatusOK {
+		t.Errorf("Status Code Not OK got %d", rr.Code)
 	}
 
 }

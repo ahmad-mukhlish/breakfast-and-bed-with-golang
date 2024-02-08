@@ -25,6 +25,8 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatal("Error")
 	}
+	defer close(AppConfig.MailChan)
+	startWorkerListenMailDummy()
 
 	os.Exit(m.Run())
 }
@@ -47,7 +49,27 @@ func setupServer() error {
 	setupRepository()
 	setupLogger()
 
+	//setup email channel
+	AppConfig.MailChan = make(chan model.MailData)
 	return err
+
+}
+
+func startWorkerListenMailDummy() {
+	go listenForMailForeverDummy()
+}
+
+func listenForMailForeverDummy() {
+
+	for {
+		sendEmailWhenRetrievedFromChannelDummy()
+	}
+
+}
+
+func sendEmailWhenRetrievedFromChannelDummy() {
+
+	_ = <-AppConfig.MailChan
 
 }
 
