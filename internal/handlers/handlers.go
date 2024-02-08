@@ -181,10 +181,10 @@ func (m *HandlerRepository) PostReservation(w http.ResponseWriter, r *http.Reque
 	m.AppConfig.Session.Put(r.Context(), "reservation", reservation)
 
 	//send email to guest
-	sendEmail(m, reservation.Email, "Reservation Notification", buildEmailNotificationGuest(reservation))
+	sendEmail(m, reservation.Email, "Reservation Notification", buildEmailNotificationGuest(reservation), "basic.html")
 
 	//send email to owner
-	sendEmail(m, "owner@breakfast-bed.com", "Owner's Reservation Notification", buildEmailNotificationOwner(reservation))
+	sendEmail(m, "owner@breakfast-bed.com", "Owner's Reservation Notification", buildEmailNotificationOwner(reservation), "basic.html")
 
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 	return
@@ -372,13 +372,14 @@ func initiateTemplate() *model.TemplateData {
 
 }
 
-func sendEmail(m *HandlerRepository, emailTo, subject, emailContent string) {
+func sendEmail(m *HandlerRepository, emailTo, subject, emailContent, templateName string) {
 
 	mail := model.MailData{
-		To:      emailTo,
-		From:    "admin@breakfast-and-bed.com",
-		Content: emailContent,
-		Subject: subject,
+		To:           emailTo,
+		From:         "admin@breakfast-and-bed.com",
+		Content:      emailContent,
+		Subject:      subject,
+		TemplateName: templateName,
 	}
 
 	m.AppConfig.MailChan <- mail
