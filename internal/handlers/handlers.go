@@ -357,6 +357,13 @@ func (m *HandlerRepository) CheckRoom(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (m *HandlerRepository) Login(w http.ResponseWriter, r *http.Request) {
+
+	initializedTemplate := initiateTemplate()
+	_ = renders.ServeTemplate(w, r, "login.page.tmpl", initializedTemplate)
+
+}
+
 func initiateTemplate() *model.TemplateData {
 
 	var emptyReservation model.Reservation

@@ -33,6 +33,8 @@ func HandleRoute() http.Handler {
 
 	router.Get("/check/room/{id}", handlers.Repo.CheckRoom)
 
+	router.Get("/user/login", handlers.Repo.Login)
+
 	rootDirectoryStaticFile := http.Dir("./res/")
 	staticFileServer := http.FileServer(rootDirectoryStaticFile)
 
