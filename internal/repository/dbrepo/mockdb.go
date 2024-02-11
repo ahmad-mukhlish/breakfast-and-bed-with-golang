@@ -77,3 +77,16 @@ func (m *mockDBRepository) GetRoomById(id int) (model.Room, error) {
 
 	return room, nil
 }
+
+func (m *mockDBRepository) GetUserById(id int) (model.User, error) {
+	var user model.User
+	return user, nil
+}
+
+func (m *mockDBRepository) UpdateUser(user model.User) error {
+	return nil
+}
+
+func (m *mockDBRepository) Authenticate(inputEmail, inputPassword string) (int, error) {
+	return 0, nil
+}
