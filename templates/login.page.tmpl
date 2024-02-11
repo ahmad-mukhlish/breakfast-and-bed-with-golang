@@ -13,7 +13,7 @@
                     <label for="email" class="form-label">Email</label>
                     <input required autocomplete="off" type="email"
                            class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "email"}} is-invalid
-                    {{end}}" id="email" name="email" aria-describedby="email" value="">
+                    {{end}}" id="email" name="email" aria-describedby="email" value="{{index .Data "email"}}">
                     <div class="invalid-feedback">
                         {{with .FormValidator.FormError.GetFirstErrorMessage "email"}} {{.}} {{end}}
                     </div>
@@ -27,7 +27,8 @@
                     <label for="password" class="form-label">Password</label>
                     <input required type="password" autocomplete="off"
                            class="form-control {{with .FormValidator.FormError.GetFirstErrorMessage "password"}} is-invalid
-                    {{end}}" id="password" name="password" aria-describedby="password" value="">
+                    {{end}}" id="password" name="password" aria-describedby="password"
+                           value="{{index .Data "password"}}">
                     <div class="invalid-feedback">
                         {{with .FormValidator.FormError.GetFirstErrorMessage "password"}} {{.}} {{end}}
                     </div>

@@ -364,6 +364,40 @@ func (m *HandlerRepository) Login(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (m *HandlerRepository) PostLogin(w http.ResponseWriter, r *http.Request) {
+
+	errorParse := r.ParseForm()
+	if errorParse != nil {
+		handleErrorAndRedirect(m, w, r, errorParse.Error())
+		return
+	}
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	//form validator
+	formValidator := form.NewValidator(r.PostForm)
+	formValidator.ValidateLength("email", 3)
+	formValidator.ValidateLength("password", 4)
+	formValidator.Required("email", "password")
+	formValidator.ValidateEmail("email")
+
+	if !formValidator.IsValid() {
+
+		data := make(map[string]interface{})
+		data["email"] = email
+		data["password"] = password
+
+		_ = renders.ServeTemplate(w, r, "login.page.tmpl", &model.TemplateData{
+			Data:          data,
+			FormValidator: formValidator,
+		})
+
+		return
+
+	}
+
+}
+
 func initiateTemplate() *model.TemplateData {
 
 	var emptyReservation model.Reservation
