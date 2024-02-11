@@ -366,12 +366,12 @@ func (m *HandlerRepository) Login(w http.ResponseWriter, r *http.Request) {
 
 func (m *HandlerRepository) PostLogin(w http.ResponseWriter, r *http.Request) {
 
-	errRenewToken := m.AppConfig.Session.RenewToken(r.Context())
-
-	if errRenewToken != nil {
-		handleErrorAndRedirect(m, w, r, errRenewToken.Error())
-		return
-	}
+	//errRenewToken := m.AppConfig.Session.RenewToken(r.Context())
+	//
+	//if errRenewToken != nil {
+	//	handleErrorAndRedirect(m, w, r, errRenewToken.Error())
+	//	return
+	//}
 
 	errorParse := r.ParseForm()
 	if errorParse != nil {
@@ -406,10 +406,12 @@ func (m *HandlerRepository) PostLogin(w http.ResponseWriter, r *http.Request) {
 	id, err := m.DBRepository.Authenticate(email, password)
 
 	if err != nil {
-		handleErrorAndRedirect(m, w, r, errorParse.Error())
+		m.AppConfig.Session.Put(r.Context(), "error", err.Error())
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
+	m.AppConfig.Session.Pop(r.Context(), "user_id")
 	m.AppConfig.Session.Put(r.Context(), "user_id", id)
 	m.AppConfig.Session.Put(r.Context(), "flash", "Login Success")
 	http.Redirect(w, r, "/", http.StatusSeeOther)

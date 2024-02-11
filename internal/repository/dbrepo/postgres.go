@@ -245,9 +245,9 @@ func (m *postgresDBRepository) Authenticate(inputEmail, inputPassword string) (i
 	var id int
 	var hashedPassword string
 
-	query := `select u.id, u.email,
+	query := `select u.id, u.password
 				from users u
-				where u.id = $1 ;`
+				where u.email = $1 ;`
 
 	rowContext := m.DB.QueryRowContext(ctx, query, inputEmail)
 	err := rowContext.Scan(&id, &hashedPassword)
@@ -259,8 +259,8 @@ func (m *postgresDBRepository) Authenticate(inputEmail, inputPassword string) (i
 
 	if errors.Is(errCompareHashing, bcrypt.ErrMismatchedHashAndPassword) {
 		return 0, errors.New("incorrect Password")
-	} else if err != nil {
-		return 0, err
+	} else if errCompareHashing != nil {
+		return 0, errCompareHashing
 	}
 
 	return id, nil
