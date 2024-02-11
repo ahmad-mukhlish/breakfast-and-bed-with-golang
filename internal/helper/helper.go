@@ -38,3 +38,7 @@ func ConvertStringSQLToTime(timeString, dateFormat string) (time.Time, error) {
 	return timeResult, nil
 
 }
+
+func IsAuthenticated(r *http.Request) bool {
+	return appConfig.Session.Exists(r.Context(), "user_id")
+}
