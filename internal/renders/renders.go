@@ -32,6 +32,7 @@ func SetupDefaultData(templateData *model.TemplateData, r *http.Request) *model.
 	templateData.Error = errorMessage
 	templateData.Flash = flashMessage
 	templateData.Warning = warningMessage
+	templateData.IsLogin = appConfig.Session.Exists(r.Context(), "user_id")
 
 	templateData.StringMap = stringMap
 

@@ -418,6 +418,16 @@ func (m *HandlerRepository) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (m *HandlerRepository) Logout(w http.ResponseWriter, r *http.Request) {
+
+	_ = m.AppConfig.Session.Destroy(r.Context())
+	_ = m.AppConfig.Session.RenewToken(r.Context())
+
+	m.AppConfig.Session.Put(r.Context(), "flash", "Logout Success")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+}
+
 func initiateTemplate() *model.TemplateData {
 
 	var emptyReservation model.Reservation

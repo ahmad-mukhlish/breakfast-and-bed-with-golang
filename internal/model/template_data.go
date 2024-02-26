@@ -9,4 +9,5 @@ type TemplateData struct {
 	Error         string
 	Flash         string
 	Warning       string
+	IsLogin       bool
 }
