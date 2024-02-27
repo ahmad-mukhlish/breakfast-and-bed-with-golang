@@ -41,6 +41,15 @@ func HandleRoute() http.Handler {
 	rootDirectoryStaticFile := http.Dir("./res/")
 	staticFileServer := http.FileServer(rootDirectoryStaticFile)
 
+	//admin secure pages
+	router.Route("/admin", func(adminRoute chi.Router) {
+
+		adminRoute.Use(Auth)
+
+		adminRoute.Get("/dashboard", handlers.Repo.AdminDashboard)
+
+	})
+
 	router.Handle("/res"+"*", http.StripPrefix("/res", staticFileServer))
 
 	return router
